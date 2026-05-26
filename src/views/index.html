@@ -4,7 +4,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dulcería Lupita</title>
+    <title>Login - Dulcería Lupita</title>
 
     <style>
         :root {
@@ -16,39 +16,51 @@
         body { background-color: var(--bg-azul); }
         .text-amarillo { color: var(--texto-amarillo); }
         .bg-rosita { background-color: var(--btn-rosita); color: black; }
+        .escondido { display:none; }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center">
 
-<h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 text-center">
-    "DULCERÍA LUPITA"
-</h1>
+<main class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
 
-<main class="flex flex-col md:flex-row bg-white/90 rounded-[2rem] shadow-2xl overflow-hidden max-w-4xl w-full border-8 border-white">
+    <h1 class="text-3xl font-bold mb-6 text-center">LOGIN</h1>
 
-    <div class="flex-1 bg-white/50 p-10 flex flex-col items-center justify-center">
-        <h2 class="text-4xl font-bold text-pink-300 mb-6 text-center">
-            BIENVENIDO A TU DULCERÍA
-        </h2>
-    </div>
+    <input id="user" class="w-full border p-2 mb-3 rounded" placeholder="Usuario">
 
-    <div class="flex-1 p-10 flex flex-col justify-center gap-4">
+    <input id="password" type="password" class="w-full border p-2 mb-3 rounded" placeholder="Contraseña">
 
-        <!--  AQUÍ ESTÁ EL ARREGLO -->
-        <a href="login.html"
-           class="bg-rosita w-full py-3 rounded-full font-bold text-center shadow-md">
-            LOGIN
-        </a>
+    <p id="error" class="text-red-500 text-sm escondido">Error</p>
 
-        <a href="contacto.html"
-           class="bg-white w-full py-3 rounded-full font-bold text-center border">
-            CONTÁCTANOS
-        </a>
-
-    </div>
+    <button onclick="login()"
+        class="bg-rosita w-full py-2 rounded font-bold mt-3">
+        Entrar
+    </button>
 
 </main>
+
+<script>
+function login() {
+    const user = document.getElementById("user").value;
+    const pass = document.getElementById("password").value;
+    const error = document.getElementById("error");
+
+    if (!user || !pass) {
+        error.classList.remove("escondido");
+        error.textContent = "Llena todos los campos";
+        return;
+    }
+
+    
+    if (user === "admin" && pass === "1234") {
+        sessionStorage.setItem("usuario", user);
+        window.location.href = "index.html";
+    } else {
+        error.classList.remove("escondido");
+        error.textContent = "Usuario incorrecto";
+    }
+}
+</script>
 
 </body>
 </html>
