@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Dulcería Lupita</title>
-    <script src="js/login.js" defer></script>
 
     <style>
         :root {
@@ -13,103 +12,55 @@
             --texto-amarillo: oklch(94.5% 0.129 101.54);
             --btn-rosita: oklch(89.9% 0.061 343.231);
         }
+
         body { background-color: var(--bg-azul); }
         .text-amarillo { color: var(--texto-amarillo); }
-        .bg-rosita { background-color: var(--btn-rosita); color: oklch(0% 0 0); }
-        .escondido { display: none; }
+        .bg-rosita { background-color: var(--btn-rosita); color: black; }
+        .escondido { display:none; }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center">
 
-    <h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 drop-shadow-md text-center">
-        "DULCERIA LUPITA"
-    </h1>
+<main class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
 
-    <main class="flex flex-col md:flex-row bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-4xl w-full border-8 border-white">
+    <h1 class="text-3xl font-bold mb-6 text-center">LOGIN</h1>
 
-        <div class="flex-1 bg-white/50 p-10 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
-            <h2 class="text-4xl font-bold text-pink-300 leading-tight mb-6">
-                BIENVENIDO<br>A TU<br>DULCERIA!
-            </h2>
+    <input id="user" class="w-full border p-2 mb-3 rounded" placeholder="Usuario">
 
-            <img src="https://images-wixmp..." alt="Cupcake" class="w-40 drop-shadow-xl">
-        </div>
+    <input id="password" type="password" class="w-full border p-2 mb-3 rounded" placeholder="Contraseña">
 
-        <div class="flex-1 p-10 flex flex-col justify-center">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h3>
+    <p id="error" class="text-red-500 text-sm escondido">Error</p>
 
-            <form id="login-form" class="space-y-4">
+    <button onclick="login()"
+        class="bg-rosita w-full py-2 rounded font-bold mt-3">
+        Entrar
+    </button>
 
-                <div>
-                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Usuario</label>
-                    <input type="text" id="user" placeholder="Usuario"
-                        class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
-                </div>
+</main>
 
-                <div>
-                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Contraseña</label>
-                    <input type="password" id="password" placeholder="••••••••"
-                        class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
-                </div>
+<script>
+function login() {
+    const user = document.getElementById("user").value;
+    const pass = document.getElementById("password").value;
+    const error = document.getElementById("error");
 
-                <p class="error escondido text-red-500 text-xs text-center font-bold">
-                    Error al entrar
-                </p>
+    if (!user || !pass) {
+        error.classList.remove("escondido");
+        error.textContent = "Llena todos los campos";
+        return;
+    }
 
-                <button type="submit"
-                    class="bg-rosita w-full py-3 rounded-full font-bold shadow-md hover:brightness-95 transition-all mt-4 uppercase tracking-widest active:scale-95">
-                    Siguiente
-                </button>
-
-            </form>
-
-            <!-- 🔥 IMPORTANTE: sin backend, solo archivo local -->
-            <p class="mt-6 text-center text-sm text-gray-400">
-                ¿No tienes cuenta?
-                <a href="register.html" class="text-pink-400 font-bold hover:underline">
-                    Regístrate
-                </a>
-            </p>
-        </div>
-
-    </main>
-
-    <!-- BOTÓN NOTIFICACIONES (sin backend, sin errores) -->
-    <div id="notif-fab"
-         onclick="window.location.href='notificaciones.html'"
-         style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
-                width:56px;height:56px;border-radius:50%;cursor:pointer;
-                background:oklch(55% 0.18 250);color:#fff;border:none;
-                display:flex;align-items:center;justify-content:center;
-                font-size:22px;box-shadow:0 6px 20px rgba(30,80,180,0.45);
-                transition:transform .2s,box-shadow .2s;"
-         title="Centro de Notificaciones">
-        🔔
-        <span id="notif-badge" style="display:none"></span>
-    </div>
-
-    <!-- LOGIN FUNCIONAL (SIN BACKEND) -->
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(e){
-            e.preventDefault();
-
-            const user = document.getElementById('user').value.trim();
-            const password = document.getElementById('password').value;
-            const error = document.querySelector('.error');
-
-            if (!user || !password) {
-                error.textContent = "Ingresa usuario y contraseña";
-                error.classList.remove('escondido');
-                return;
-            }
-
-            // login simulado
-            sessionStorage.setItem('usuario', user);
-
-            window.location.href = "index.html";
-        });
-    </script>
+    
+    if (user === "admin" && pass === "1234") {
+        sessionStorage.setItem("usuario", user);
+        window.location.href = "index.html";
+    } else {
+        error.classList.remove("escondido");
+        error.textContent = "Usuario incorrecto";
+    }
+}
+</script>
 
 </body>
 </html>
