@@ -4,8 +4,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Dulcería Lupita</title>
-    <script src="js/login.js" defer></script>
+    <title>Dulcería Lupita</title>
+
     <style>
         :root {
             --bg-azul: oklch(82.8% 0.111 230.318);
@@ -18,74 +18,69 @@
         .escondido { display: none; }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- BOTÓN LOGIN -->
+    <div class="absolute top-5 right-5">
+        <a href="login.html" class="bg-rosita px-4 py-2 rounded-full font-bold shadow-md">
+            Login
+        </a>
+    </div>
 
     <h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 drop-shadow-md text-center">
         "DULCERIA LUPITA"
     </h1>
 
     <main class="flex flex-col md:flex-row bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-4xl w-full border-8 border-white">
+
         <div class="flex-1 bg-white/50 p-10 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
-            <h2 class="text-4xl font-bold text-pink-300 leading-tight mb-6">BIENVENIDO<br>A TU<br>DULCERIA!</h2>
-            <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c12979b2-cbbe-4573-b300-d3d83cd2f941/dc2g33m-3a7724ac-3d4c-4daa-ba6e-8236f469f0d3.png/v1/fill/w_277,h_270/peque_pack0011_dulces_by_sabris89_dc2g33m-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MjcwIiwicGF0aCI6IlwvZlwvYzEyOTc5YjItY2JiZS00NTczLWIzMDAtZDNkODNjZDJmOTQxXC9kYzJnMzNtLTNhNzcyNGFjLTNkNGMtNGRhYS1iYTZlLTgyMzZmNDY5ZjBkMy5wbmciLCJ3aWR0aCI6Ijw9Mjc3In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.OIHWNnStVtZ0nAQoXL7SwOPntqMaygOYwpLLUzEhq0k" alt="Cupcake" class="w-40 drop-shadow-xl">
+            <h2 class="text-4xl font-bold text-pink-300 leading-tight mb-6">
+                BIENVENIDO<br>A TU<br>DULCERIA!
+            </h2>
+
+            <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c12979b2-cbbe-4573-b300-d3d83cd2f941/dc2g33m-3a7724ac-3d4c-4daa-ba6e-8236f469f0d3.png"
+                 alt="Cupcake"
+                 class="w-40 drop-shadow-xl">
         </div>
 
         <div class="flex-1 p-10 flex flex-col justify-center">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h3>
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Usuario</label>
-                    <input type="text" id="user" placeholder="Usuario" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Contraseña</label>
-                    <input type="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
-                </div>
-                
-                <p class="error escondido text-red-500 text-xs text-center font-bold">Error al entrar</p>
 
-                <button type="submit" class="bg-rosita w-full py-3 rounded-full font-bold shadow-md hover:brightness-95 transition-all mt-4 uppercase tracking-widest active:scale-95">
-                    Siguiente
-                </button>
-            </form>
-            <p class="mt-6 text-center text-sm text-gray-400">¿No tienes cuenta? <a href="register.html" class="text-pink-400 font-bold hover:underline">Regístrate</a></p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                Inicio
+            </h3>
+
+            <p class="text-center text-gray-500 mb-4">
+                Bienvenido a Dulcería Lupita 🍬
+            </p>
+
+            <button onclick="sessionStorage.removeItem('usuario'); location.reload();"
+                class="bg-rosita w-full py-3 rounded-full font-bold shadow-md">
+                Cerrar sesión
+            </button>
+
         </div>
+
     </main>
-<!-- ═══ BOTÓN FLOTANTE NOTIFICACIONES ═══════════════════════════════════ -->
-<div id="notif-fab" onclick="window.location.href='/notificaciones'"
-     style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
-            width:56px;height:56px;border-radius:50%;cursor:pointer;
-            background:oklch(55% 0.18 250);color:#fff;border:none;
-            display:flex;align-items:center;justify-content:center;
-            font-size:22px;box-shadow:0 6px 20px rgba(30,80,180,0.45);
-            transition:transform .2s,box-shadow .2s;"
-     onmouseover="this.style.transform='scale(1.12)';this.style.boxShadow='0 10px 30px rgba(30,80,180,0.65)'"
-     onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 20px rgba(30,80,180,0.45)'"
-     title="Centro de Notificaciones">
-  🔔
-  <span id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;
-        background:#ef4444;color:#fff;border-radius:50%;min-width:20px;height:20px;
-        font-size:11px;font-weight:900;line-height:20px;text-align:center;padding:0 4px;
-        border:2px solid #fff;"></span>
-</div>
-<script>
-document.getElementById('login-form').addEventListener('submit', function(e){
-    e.preventDefault(); // evita recargar página
 
-    const user = document.getElementById('user').value.trim();
-    const password = document.getElementById('password').value;
-    const error = document.querySelector('.error');
+    
+    <div id="notif-fab"
+         onclick="window.location.href='notificaciones.html'"
+         style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
+                width:56px;height:56px;border-radius:50%;cursor:pointer;
+                background:oklch(55% 0.18 250);color:#fff;border:none;
+                display:flex;align-items:center;justify-content:center;
+                font-size:22px;box-shadow:0 6px 20px rgba(30,80,180,0.45);"
+         title="Notificaciones">
+        🔔
+    </div>
 
-    if (!user || !password) {
-        error.textContent = "Ingresa usuario y contraseña";
-        error.classList.remove('escondido');
-        return;
-    }
+    <script>
+        // si no hay sesión, manda al login
+        if (!sessionStorage.getItem('usuario')) {
+            window.location.href = "login.html";
+        }
+    </script>
 
-   
-    sessionStorage.setItem('usuario', user);
-    window.location.href = "index.html";
-});
-</script>
 </body>
 </html>
