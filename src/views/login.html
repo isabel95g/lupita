@@ -1,78 +1,115 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Dulcería Lupita</title>
+    <script src="js/login.js" defer></script>
 
     <style>
-        body { font-family: sans-serif; background: #f8fafc; }
-        .input-dark { padding: 10px; width: 100%; margin: 5px 0; }
-        .btn { background: #0d9488; color: white; padding: 12px; width: 100%; border: none; cursor: pointer; }
-        .error { color: red; font-size: 12px; display: none; }
+        :root {
+            --bg-azul: oklch(82.8% 0.111 230.318);
+            --texto-amarillo: oklch(94.5% 0.129 101.54);
+            --btn-rosita: oklch(89.9% 0.061 343.231);
+        }
+        body { background-color: var(--bg-azul); }
+        .text-amarillo { color: var(--texto-amarillo); }
+        .bg-rosita { background-color: var(--btn-rosita); color: oklch(0% 0 0); }
+        .escondido { display: none; }
     </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div style="width:300px;">
-        <h1 style="text-align:center;">DULCERÍA LUPITA</h1>
+    <h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 drop-shadow-md text-center">
+        "DULCERIA LUPITA"
+    </h1>
 
-        <h3>Iniciar Sesión</h3>
+    <main class="flex flex-col md:flex-row bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-4xl w-full border-8 border-white">
 
-        <input id="user" class="input-dark" type="text" placeholder="Usuario o correo">
-        <input id="password" class="input-dark" type="password" placeholder="Contraseña">
+        <div class="flex-1 bg-white/50 p-10 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+            <h2 class="text-4xl font-bold text-pink-300 leading-tight mb-6">
+                BIENVENIDO<br>A TU<br>DULCERIA!
+            </h2>
 
-        <p id="errorMsg" class="error">Error</p>
+            <img src="https://images-wixmp..." alt="Cupcake" class="w-40 drop-shadow-xl">
+        </div>
 
-        <button class="btn" onclick="iniciarSesion()">Entrar</button>
+        <div class="flex-1 p-10 flex flex-col justify-center">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h3>
 
-        <p style="margin-top:10px;">
-            ¿No tienes cuenta?
-            <a href="register.html">Regístrate</a>
-        </p>
+            <form id="login-form" class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Usuario</label>
+                    <input type="text" id="user" placeholder="Usuario"
+                        class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••"
+                        class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                </div>
+
+                <p class="error escondido text-red-500 text-xs text-center font-bold">
+                    Error al entrar
+                </p>
+
+                <button type="submit"
+                    class="bg-rosita w-full py-3 rounded-full font-bold shadow-md hover:brightness-95 transition-all mt-4 uppercase tracking-widest active:scale-95">
+                    Siguiente
+                </button>
+
+            </form>
+
+            <!-- 🔥 IMPORTANTE: sin backend, solo archivo local -->
+            <p class="mt-6 text-center text-sm text-gray-400">
+                ¿No tienes cuenta?
+                <a href="register.html" class="text-pink-400 font-bold hover:underline">
+                    Regístrate
+                </a>
+            </p>
+        </div>
+
+    </main>
+
+    <!-- BOTÓN NOTIFICACIONES (sin backend, sin errores) -->
+    <div id="notif-fab"
+         onclick="window.location.href='notificaciones.html'"
+         style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
+                width:56px;height:56px;border-radius:50%;cursor:pointer;
+                background:oklch(55% 0.18 250);color:#fff;border:none;
+                display:flex;align-items:center;justify-content:center;
+                font-size:22px;box-shadow:0 6px 20px rgba(30,80,180,0.45);
+                transition:transform .2s,box-shadow .2s;"
+         title="Centro de Notificaciones">
+        🔔
+        <span id="notif-badge" style="display:none"></span>
     </div>
-<script>
-document.getElementById('password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') iniciarSesion();
-});
 
-document.getElementById('user').addEventListener('keydown', e => {
-    if (e.key === 'Enter') iniciarSesion();
-});
+    <!-- LOGIN FUNCIONAL (SIN BACKEND) -->
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e){
+            e.preventDefault();
 
-async function iniciarSesion() {
-    const user = document.getElementById('user').value.trim();
-    const password = document.getElementById('password').value;
-    const errorMsg = document.getElementById('errorMsg');
+            const user = document.getElementById('user').value.trim();
+            const password = document.getElementById('password').value;
+            const error = document.querySelector('.error');
 
-    if (!user || !password) {
-        errorMsg.textContent = 'Ingresa tu correo y contraseña';
-        errorMsg.classList.remove('escondido');
-        return;
-    }
+            if (!user || !password) {
+                error.textContent = "Ingresa usuario y contraseña";
+                error.classList.remove('escondido');
+                return;
+            }
 
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRe.test(user)) {
-        errorMsg.textContent = 'Ingresa un correo válido';
-        errorMsg.classList.remove('escondido');
-        return;
-    }
-
-    try {
-        
-        if (user && password) {
+            // login simulado
             sessionStorage.setItem('usuario', user);
-            window.location.href = 'index.html';
-        }
 
-    } catch (err) {
-        errorMsg.textContent = 'Error de conexión';
-        errorMsg.classList.remove('escondido');
-    }
-}
-</script>
+            window.location.href = "index.html";
+        });
+    </script>
 
 </body>
 </html>
