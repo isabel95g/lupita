@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Mantenimiento</title>
+    <style>
+        :root {
+            --fiusha: #ff007f;
+            --fiusha-dark: #d4006a;
+            --sidebar-bg: #0a0e17;
+            --body-bg: #f3f4f6;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--body-bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            padding: 0 20px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: block;
+            color: #9ca3af;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover { color: white; background: #1f2937; }
+        .nav-item.active { background-color: var(--fiusha); color: white; }
+
+        .nav-sub-item {
+            padding-left: 45px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .modulo { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .modulo.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card-title {
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .row-inputs { display: flex; gap: 15px; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            background-color: var(--fiusha);
+        }
+        .btn-submit:hover { background-color: var(--fiusha-dark); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        table th { background-color: #f9fafb; color: #374151; font-weight: 600; }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            margin-right: 5px;
+            transition: opacity 0.2s;
+        }
+        .btn-edit   { background-color: var(--success); }
+        .btn-delete { background-color: var(--danger); }
+        .btn-action:hover { opacity: 0.75; }
+
+        .empty-msg {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px 0;
+            font-size: 0.95rem;
+        }
+
+        /* Toast de confirmación */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            width: 480px;
+            max-width: 92%;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+        }
+        .modal h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.15rem; }
+
+        .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
+
+        .btn-cancel {
+            flex: 1; padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-save {
+            flex: 1; padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--fiusha);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-save:hover { background: var(--fiusha-dark); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Módulo De Mantenimiento</h2>
+    <button class="nav-item active" onclick="mostrarModulo('inicio', this)">Inicio</button>
+
+    <div style="margin-top:10px;color:#4b5563;padding-left:20px;font-size:0.7rem;text-transform:uppercase;">Proveedores</div>
+    <button class="nav-item nav-sub-item" onclick="mostrarModulo('modulo-proveedores', this)">Registrar Proveedor</button>
+    <button class="nav-item nav-sub-item" onclick="mostrarModulo('lista-proveedores', this)">Lista de Proveedores</button>
+
+    <div style="margin-top:10px;color:#4b5563;padding-left:20px;font-size:0.7rem;text-transform:uppercase;">Productos</div>
+    <button class="nav-item nav-sub-item" onclick="mostrarModulo('modulo-productos', this)">Registrar Producto</button>
+    <button class="nav-item nav-sub-item" onclick="mostrarModulo('lista-productos', this)">Lista de Productos</button>
+</div>
+
+<div class="main-content">
+
+    <div id="inicio" class="modulo active">
+        <h1>Bienvenido al Panel de Gestión</h1>
+        <p>Seleccione una opción en el menú lateral para comenzar.</p>
+    </div>
+
+    <!-- REGISTRAR PROVEEDOR -->
+    <div id="modulo-proveedores" class="modulo">
+        <div class="card">
+            <div class="card-title">Registro de Proveedores</div>
+            <form id="form-proveedores">
+                <input type="text"  id="prov-nombre"    placeholder="Nombre de la Empresa" required>
+                <div class="row-inputs">
+                    <input type="text" id="prov-rfc"   placeholder="RFC" maxlength="13" required>
+                    <input type="text" id="prov-tel"   placeholder="Teléfono" maxlength="10" required>
+                </div>
+                <input type="email" id="prov-correo"   placeholder="Correo Electrónico" required>
+                <input type="text"  id="prov-direccion" placeholder="Dirección">
+                <input type="text"  id="prov-contacto"  placeholder="Persona de Contacto">
+                <button type="submit" class="btn-submit">Registrar Empresa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LISTA PROVEEDORES -->
+    <div id="lista-proveedores" class="modulo">
+        <div class="card">
+            <div class="card-title">Proveedores Registrados</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th><th>RFC</th><th>Teléfono</th>
+                        <th>Correo</th><th>Dirección</th><th>Contacto</th>
+                        <th>Operaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-prov-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- REGISTRAR PRODUCTO -->
+    <div id="modulo-productos" class="modulo">
+        <div class="card">
+            <div class="card-title">Catálogo de Productos</div>
+            <form id="form-productos">
+                <input type="text"   id="prod-nombre"    placeholder="Nombre del Artículo" required>
+                <select             id="prod-prov"       required>
+                    <option value="" disabled selected>Seleccionar Proveedor...</option>
+                </select>
+
+                <select name="unidad_medida" required>
+                        <option value="" disabled selected>Seleccionar Unidad de Medida...</option>
+                        <optgroup label="Unidades">
+                            <option value="pieza">Pieza</option>
+                            <option value="docena">Docena</option>
+                            <option value="par">Unidad</option>
+                            <option value="caja">Unidad</option>
+                            <option value="Unidades">Unidad</option>                           
+                        </optgroup>
+                        <optgroup label="Peso">
+                            <option value="kg">Kilogramo (kg)</option>
+                            <option value="g">Gramo (g)</option>
+                            <option value="mg">Miligramo (mg)</option>
+                            <option value="t">Tonelada (t)</option>
+                            <option value="lb">Libra (lb)</option>
+                            <option value="oz">Onza (oz)</option>
+                        </optgroup>
+                        <optgroup label="Volumen">
+                            <option value="l">Litro (l)</option>
+                            <option value="ml">Mililitro (ml)</option>
+                             <option value="cm">Centimetro (cm)</option>
+                            <option value="gal">Galon (gal)</option>
+                             <option value="floz">Onza Liquida (floz)</option>
+                        </optgroup>
+                    </select>
+
+
+                <div class="row-inputs">
+                    <input type="number" id="prod-costo"     placeholder="Costo"        step="0.01" required>
+                    <input type="number" id="prod-venta"     placeholder="Venta"        step="0.01" required>
+                    <input type="number" id="prod-stock"     placeholder="Stock"        required>
+                    <input type="number" id="prod-stock-min" placeholder="Stock Mínimo" required>
+                </div>
+                <button type="submit" class="btn-submit">Agregar al Catálogo</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LISTA PRODUCTOS -->
+    <div id="lista-productos" class="modulo">
+        <div class="card">
+            <div class="card-title">Inventario de Productos</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th><th>Proveedor</th><th>Costo</th>
+                        <th>Venta</th><th>Stock</th><th>Stock Mín.</th>
+                        <th>Operaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-prod-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL EDITAR PROVEEDOR -->
+<div class="modal-overlay" id="modal-prov">
+    <div class="modal">
+        <h3>✏️ Editar Proveedor</h3>
+        <input type="hidden" id="edit-prov-id">
+        <input type="text"   id="edit-prov-nombre"    placeholder="Nombre de la Empresa">
+        <div class="row-inputs">
+            <input type="text" id="edit-prov-rfc"    placeholder="RFC" maxlength="13">
+            <input type="text" id="edit-prov-tel"    placeholder="Teléfono" maxlength="10">
+        </div>
+        <input type="email"  id="edit-prov-correo"    placeholder="Correo Electrónico">
+        <input type="text"   id="edit-prov-direccion" placeholder="Dirección">
+        <input type="text"   id="edit-prov-contacto"  placeholder="Persona de Contacto">
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="cerrarModal('modal-prov')">Cancelar</button>
+            <button class="btn-save"   onclick="guardarEdicionProveedor()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL EDITAR PRODUCTO -->
+<div class="modal-overlay" id="modal-prod">
+    <div class="modal">
+        <h3>✏️ Editar Producto</h3>
+        <input type="hidden" id="edit-prod-id">
+        <input type="text"   id="edit-prod-nombre"    placeholder="Nombre del Artículo">
+        <select              id="edit-prod-prov"></select>
+        <div class="row-inputs">
+            <input type="number" id="edit-prod-costo"     placeholder="Costo"   step="0.01">
+            <input type="number" id="edit-prod-venta"     placeholder="Venta"   step="0.01">
+        </div>
+        <div class="row-inputs">
+            <input type="number" id="edit-prod-stock"     placeholder="Stock">
+            <input type="number" id="edit-prod-stock-min" placeholder="Stock Mínimo">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="cerrarModal('modal-prod')">Cancelar</button>
+            <button class="btn-save"   onclick="guardarEdicionProducto()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════
+
+function toast(msg, color) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = color || '#1f2937';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function generarId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// localStorage helpers
+function getProveedores() {
+    return JSON.parse(localStorage.getItem('proveedores') || '[]');
+}
+function saveProveedores(data) {
+    localStorage.setItem('proveedores', JSON.stringify(data));
+}
+function getProductos() {
+    return JSON.parse(localStorage.getItem('productos') || '[]');
+}
+function saveProductos(data) {
+    localStorage.setItem('productos', JSON.stringify(data));
+}
+
+// ═══════════════════════════════════════════════
+//  NAVEGACIÓN
+// ═══════════════════════════════════════════════
+
+function mostrarModulo(idModulo, elemento) {
+    document.querySelectorAll('.modulo').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(idModulo).classList.add('active');
+    elemento.classList.add('active');
+
+    if (idModulo === 'lista-proveedores') renderTablaProveedores();
+    if (idModulo === 'lista-productos')   renderTablaProductos();
+    if (idModulo === 'modulo-productos')  llenarSelectProv(document.getElementById('prod-prov'));
+}
+
+// ═══════════════════════════════════════════════
+//  MODALES
+// ═══════════════════════════════════════════════
+
+function abrirModal(id)  { document.getElementById(id).classList.add('active'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ═══════════════════════════════════════════════
+//  PROVEEDORES — Registrar
+// ═══════════════════════════════════════════════
+
+document.getElementById('form-proveedores').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nuevo = {
+        id:        generarId(),
+        Nombre:    document.getElementById('prov-nombre').value.trim(),
+        RFC:       document.getElementById('prov-rfc').value.trim(),
+        Telefono:  document.getElementById('prov-tel').value.trim(),
+        Correo:    document.getElementById('prov-correo').value.trim(),
+        Direccion: document.getElementById('prov-direccion').value.trim(),
+        Contacto:  document.getElementById('prov-contacto').value.trim()
+    };
+
+    const lista = getProveedores();
+    lista.push(nuevo);
+    saveProveedores(lista);
+
+    this.reset();
+    toast('✅ Proveedor registrado correctamente', '#10b981');
+});
+
+// ═══════════════════════════════════════════════
+//  PROVEEDORES — Mostrar en tabla
+// ═══════════════════════════════════════════════
+
+function renderTablaProveedores() {
+    const lista = getProveedores();
+    const tbody = document.getElementById('tabla-prov-body');
+    tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">No hay proveedores registrados aún.</td></tr>';
+        return;
+    }
+
+    lista.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${p.Nombre}</td>
+            <td>${p.RFC}</td>
+            <td>${p.Telefono}</td>
+            <td>${p.Correo}</td>
+            <td>${p.Direccion || '—'}</td>
+            <td>${p.Contacto  || '—'}</td>
+            <td>
+                <button class="btn-action btn-edit"
+                    onclick="abrirEditarProv('${p.id}')">✏️ Actualizar</button>
+                <button class="btn-action btn-delete"
+                    onclick="eliminarProv('${p.id}')">🗑️ Eliminar</button>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  PROVEEDORES — Editar
+// ═══════════════════════════════════════════════
+
+function abrirEditarProv(id) {
+    const p = getProveedores().find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('edit-prov-id').value        = p.id;
+    document.getElementById('edit-prov-nombre').value    = p.Nombre;
+    document.getElementById('edit-prov-rfc').value       = p.RFC;
+    document.getElementById('edit-prov-tel').value       = p.Telefono;
+    document.getElementById('edit-prov-correo').value    = p.Correo;
+    document.getElementById('edit-prov-direccion').value = p.Direccion || '';
+    document.getElementById('edit-prov-contacto').value  = p.Contacto  || '';
+    abrirModal('modal-prov');
+}
+
+function guardarEdicionProveedor() {
+    const id   = document.getElementById('edit-prov-id').value;
+    const lista = getProveedores();
+    const idx  = lista.findIndex(x => x.id === id);
+    if (idx === -1) return;
+
+    lista[idx].Nombre    = document.getElementById('edit-prov-nombre').value.trim();
+    lista[idx].RFC       = document.getElementById('edit-prov-rfc').value.trim();
+    lista[idx].Telefono  = document.getElementById('edit-prov-tel').value.trim();
+    lista[idx].Correo    = document.getElementById('edit-prov-correo').value.trim();
+    lista[idx].Direccion = document.getElementById('edit-prov-direccion').value.trim();
+    lista[idx].Contacto  = document.getElementById('edit-prov-contacto').value.trim();
+
+    saveProveedores(lista);
+    cerrarModal('modal-prov');
+    renderTablaProveedores();
+    toast('✅ Proveedor actualizado', '#10b981');
+}
+
+// ═══════════════════════════════════════════════
+//  PROVEEDORES — Eliminar
+// ═══════════════════════════════════════════════
+
+function eliminarProv(id) {
+    if (!confirm('¿Está seguro de eliminar este proveedor?')) return;
+    saveProveedores(getProveedores().filter(x => x.id !== id));
+    renderTablaProveedores();
+    toast('🗑️ Proveedor eliminado', '#ef4444');
+}
+
+// ═══════════════════════════════════════════════
+//  PRODUCTOS — Helpers de select
+// ═══════════════════════════════════════════════
+
+function llenarSelectProv(selectEl, valorSeleccionado) {
+    if (!selectEl) return;
+    const provs = getProveedores();
+    selectEl.innerHTML = '<option value="" disabled selected>Seleccionar Proveedor...</option>';
+    provs.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value       = p.id;
+        opt.textContent = p.Nombre;
+        selectEl.appendChild(opt);
+    });
+    if (valorSeleccionado) selectEl.value = valorSeleccionado;
+}
+
+// ═══════════════════════════════════════════════
+//  PRODUCTOS — Registrar
+// ═══════════════════════════════════════════════
+
+document.getElementById('form-productos').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const provId  = document.getElementById('prod-prov').value;
+    const provObj = getProveedores().find(p => p.id === provId);
+
+    const nuevo = {
+        id:          generarId(),
+        Nombre:      document.getElementById('prod-nombre').value.trim(),
+        ProveedorId: provId,
+        Proveedor:   provObj ? provObj.Nombre : '—',
+        Costo:       parseFloat(document.getElementById('prod-costo').value),
+        PrecioVenta: parseFloat(document.getElementById('prod-venta').value),
+        Stock:       parseInt(document.getElementById('prod-stock').value),
+        StockMinimo: parseInt(document.getElementById('prod-stock-min').value)
+    };
+
+    const lista = getProductos();
+    lista.push(nuevo);
+    saveProductos(lista);
+
+    this.reset();
+    toast('✅ Producto agregado al catálogo', '#10b981');
+});
+
+// ═══════════════════════════════════════════════
+//  PRODUCTOS — Mostrar en tabla
+// ═══════════════════════════════════════════════
+
+function renderTablaProductos() {
+    const lista = getProductos();
+    const tbody = document.getElementById('tabla-prod-body');
+    tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">No hay productos registrados aún.</td></tr>';
+        return;
+    }
+
+    lista.forEach(p => {
+        const stockBajo = p.Stock <= p.StockMinimo;
+        const stockCell = stockBajo
+            ? `<span style="color:var(--danger);font-weight:bold;">⚠️ ${p.Stock}</span>`
+            : p.Stock;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${p.Nombre}</td>
+            <td>${p.Proveedor}</td>
+            <td>$${p.Costo.toFixed(2)}</td>
+            <td>$${p.PrecioVenta.toFixed(2)}</td>
+            <td>${stockCell}</td>
+            <td>${p.StockMinimo}</td>
+            <td>
+                <button class="btn-action btn-edit"
+                    onclick="abrirEditarProd('${p.id}')">✏️ Actualizar</button>
+                <button class="btn-action btn-delete"
+                    onclick="eliminarProd('${p.id}')">🗑️ Eliminar</button>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  PRODUCTOS — Editar
+// ═══════════════════════════════════════════════
+
+function abrirEditarProd(id) {
+    const p = getProductos().find(x => x.id === id);
+    if (!p) return;
+    llenarSelectProv(document.getElementById('edit-prod-prov'), p.ProveedorId);
+    document.getElementById('edit-prod-id').value        = p.id;
+    document.getElementById('edit-prod-nombre').value    = p.Nombre;
+    document.getElementById('edit-prod-costo').value     = p.Costo;
+    document.getElementById('edit-prod-venta').value     = p.PrecioVenta;
+    document.getElementById('edit-prod-stock').value     = p.Stock;
+    document.getElementById('edit-prod-stock-min').value = p.StockMinimo;
+    abrirModal('modal-prod');
+}
+
+function guardarEdicionProducto() {
+    const id    = document.getElementById('edit-prod-id').value;
+    const lista = getProductos();
+    const idx   = lista.findIndex(x => x.id === id);
+    if (idx === -1) return;
+
+    const provId  = document.getElementById('edit-prod-prov').value;
+    const provObj = getProveedores().find(p => p.id === provId);
+
+    lista[idx].Nombre      = document.getElementById('edit-prod-nombre').value.trim();
+    lista[idx].ProveedorId = provId;
+    lista[idx].Proveedor   = provObj ? provObj.Nombre : '—';
+    lista[idx].Costo       = parseFloat(document.getElementById('edit-prod-costo').value);
+    lista[idx].PrecioVenta = parseFloat(document.getElementById('edit-prod-venta').value);
+    lista[idx].Stock       = parseInt(document.getElementById('edit-prod-stock').value);
+    lista[idx].StockMinimo = parseInt(document.getElementById('edit-prod-stock-min').value);
+
+    saveProductos(lista);
+    cerrarModal('modal-prod');
+    renderTablaProductos();
+    toast('✅ Producto actualizado', '#10b981');
+}
+
+// ═══════════════════════════════════════════════
+//  PRODUCTOS — Eliminar
+// ═══════════════════════════════════════════════
+
+function eliminarProd(id) {
+    if (!confirm('¿Eliminar este producto del inventario?')) return;
+    saveProductos(getProductos().filter(x => x.id !== id));
+    renderTablaProductos();
+    toast('🗑️ Producto eliminado', '#ef4444');
+}
+</script>
+</body>
+</html>

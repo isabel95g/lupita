@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dulcería Lupita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main:   #f8fafc;
+            --bg-card:   #112240;
+            --bg-sidebar:#1a3560;
+            --accent:    #2d6aad;
+            --accent2:   #0d9488;
+            --border:    rgba(45,106,173,0.20);
+            --text-main: #1e293b;
+            --text-muted:#64748b;
+        }
+        body { font-family:'Plus Jakarta Sans',sans-serif; background-color:var(--bg-main);  }
+        .glass { background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 4px 24px rgba(0,0,0,0.08); }
+        .btn-accent { background:var(--accent); color:#ffffff; }
+        .btn-accent:hover { background:#3a7dc4; }
+        .btn-orange { background:var(--accent2); color:#ffffff; }
+        .btn-orange:hover { opacity:0.9; }
+        .input-dark { background:#f8fafc; border:1px solid #cbd5e1; color:#1e293b; }
+        .input-dark:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,106,173,0.25); outline:none; }
+        .input-dark::placeholder { color:#94a3b8; }
+        .card-module { background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.06); transition:all .25s; }
+        .card-module:hover { border-color:var(--accent2); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+        .escondido { display:none; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <h1 class="text-5xl md:text-6xl font-black mb-8 drop-shadow-md text-center" style="color:var(--accent2);">
+        DULCERÍA LUPITA
+    </h1>
+
+    <main class="glass rounded-[2rem] shadow-2xl overflow-hidden max-w-3xl w-full flex flex-col md:flex-row">
+        <div class="flex-1 p-10 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
+            <h2 class="text-3xl font-black text-white leading-tight mb-4 text-center">BIENVENIDO<br>AL SISTEMA</h2>
+            <p class="text-sm font-semibold mb-6" style="color:var(--text-muted)">Sistema de gestión de almacén</p>
+            <img src="/img/logo.png" alt="Logo Dulcería Lupita" class="w-36 drop-shadow-xl opacity-90" onerror="this.style.display='none'">
+        </div>
+
+        <div class="flex-1 p-10 flex flex-col justify-center">
+            <h3 class="text-2xl font-black text-white mb-8">Iniciar Sesión</h3>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest mb-2" style="color:var(--text-muted)">Correo</label>
+                    <input type="email" id="user" placeholder="correo@ejemplo.com" maxlength="150" autocomplete="email" class="input-dark w-full px-5 py-3 rounded-xl font-semibold transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest mb-2" style="color:var(--text-muted)">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" maxlength="100" autocomplete="current-password" class="input-dark w-full px-5 py-3 rounded-xl font-semibold transition-all">
+                </div>
+                <p id="errorMsg" class="escondido text-red-400 text-xs text-center font-bold bg-red-400/10 py-2 rounded-lg">Usuario o contraseña incorrectos</p>
+                <button onclick="iniciarSesion()" class="btn-orange w-full py-4 rounded-xl font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 mt-2">
+                    Entrar
+                </button>
+            </div>
+            <p class="mt-6 text-center text-sm" style="color:var(--text-muted)">
+                ¿No tienes cuenta? <a href="/register" class="font-black hover:underline" style="color:var(--accent2)">Regístrate</a>
+            </p>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') iniciarSesion(); });
+        document.getElementById('user').addEventListener('keydown',     e => { if (e.key === 'Enter') iniciarSesion(); });
+        async function iniciarSesion() {
+            const user = document.getElementById('user').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            if (!user || !password) { errorMsg.textContent = 'Ingresa tu correo y contraseña'; errorMsg.classList.remove('escondido'); return; }
+            const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRe.test(user)) { errorMsg.textContent = 'Ingresa un correo electrónico válido (ej: usuario@dominio.com)'; errorMsg.classList.remove('escondido'); return; }
+            if (password.length < 1) { errorMsg.textContent = 'Ingresa tu contraseña'; errorMsg.classList.remove('escondido'); return; }
+            try {
+                const res  = await fetch('/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({user: user.trim().toLowerCase(), password: password}) });
+                const data = await res.json();
+                if (data.success) {
+                    // Guardar sesión en sessionStorage para uso del frontend
+                    sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    window.location.href = '/admin';
+                }
+                else { errorMsg.textContent = data.mensaje || 'Usuario o contraseña incorrectos'; errorMsg.classList.remove('escondido'); }
+            } catch(err) { errorMsg.textContent = 'Error de conexión con el servidor'; errorMsg.classList.remove('escondido'); }
+        }
+    </script>
+</body>
+</html>

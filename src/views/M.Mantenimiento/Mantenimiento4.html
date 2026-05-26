@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Mantenimiento</title>
+    <style>
+        :root {
+            --fiusha: #ff007f;
+            --fiusha-dark: #d4006a;
+            --sidebar-bg: #111827;
+            --body-bg: #f3f4f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--body-bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            padding: 0 20px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: block;
+            text-decoration: none;
+            color: #9ca3af;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover { color: white; background: #1f2937; }
+
+        .nav-item.active {
+            background-color: var(--fiusha);
+            color: white;
+        }
+
+        .nav-sub-item {
+            padding-left: 45px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Contenedor Principal */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .modulo {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modulo.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 800px; /* Un poco más ancho para las tablas */
+            margin: 0 auto;
+        }
+
+        .card-title {
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        .row-inputs { display: flex; gap: 15px; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            background-color: var(--fiusha);
+        }
+
+        /* Estilos de Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #fd1270;
+        }
+
+        table th { background-color: #f9fafb; color: #374151; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Módulo De Mantenimiento</h2>
+        <button class="nav-item active" onclick="mostrarModulo('inicio', this)">Inicio</button>
+        
+        <div style="margin-top:10px; color:#4b5563; padding-left:20px; font-size:0.7rem; text-transform:uppercase;">Proveedores</div>
+        <button class="nav-item nav-sub-item" onclick="mostrarModulo('modulo-proveedores', this)">Registrar Proveedor</button>
+        <button class="nav-item nav-sub-item" onclick="mostrarModulo('lista-proveedores', this)">Lista de Proveedores</button>
+
+        <div style="margin-top:10px; color:#4b5563; padding-left:20px; font-size:0.7rem; text-transform:uppercase;">Productos</div>
+        <button class="nav-item nav-sub-item" onclick="mostrarModulo('modulo-productos', this)">Registrar Producto</button>
+        <button class="nav-item nav-sub-item" onclick="mostrarModulo('lista-productos', this)">Lista de Productos</button>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="inicio" class="modulo active">
+            <h1>Bienvenido al Panel de Gestión</h1>
+            <p>Seleccione una opción en el menú lateral para comenzar.</p>
+        </div>
+
+        <div id="modulo-proveedores" class="modulo">
+            <div class="card">
+                <div class="card-title">Registro de Proveedores</div>
+                <form id="form-proveedores">
+                    <input type="text" id="prov-nombre" placeholder="Nombre de la Empresa" required>
+                    <div class="row-inputs">
+                        <input type="text" id="prov-rfc" placeholder="RFC" maxlength="13" required>
+                        <input type="text" id="prov-tel" placeholder="Teléfono" maxlength="10" required>
+                    </div>
+                    <input type="email" id="prov-correo" placeholder="Correo Electrónico" required>
+                    <button type="submit" class="btn-submit">Registrar Empresa</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="lista-proveedores" class="modulo">
+            <div class="card">
+                <div class="card-title">Proveedores Registrados</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>RFC</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Dirección</th>
+                            <th>Contacto</th>  
+                             <th>Operaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-prov-body"></tbody>
+                </table>
+            </div>
+            <script>
+                //jona
+    // Función para cargar proveedores desde la DB al iniciar
+function cargarProveedores() {
+    fetch('/api/proveedores')
+        .then(res => res.json())
+        .then(data => {
+            const tabla = document.getElementById('tabla-prov-body');
+            const selectProv = document.getElementById('prod-prov');
+            
+            tabla.innerHTML = ''; // Limpiar tabla
+            selectProv.innerHTML = '<option value="" disabled selected>Seleccionar Proveedor...</option>';
+
+            data.forEach(prov => {
+                // Llenar Tabla
+                const fila = `<tr>
+                    <td>${prov.Nombre}</td>
+                    <td>${prov.RFC}</td>
+                    <td>${prov.Telefono}</td>
+                    <td>${prov.Correo}</td>
+                    <td>${prov.Direccion}</td>
+                    <td>${prov.Contacto}</td>
+                     <td>
+                        <button onclick="editarProveedor(${prov.id})">Editar</button>
+                        <button onclick="eliminarProveedor(${prov.id})">Eliminar</button>
+                </tr>`;
+                tabla.innerHTML += fila;
+
+                // Llenar Select de productos
+                const option = document.createElement('option');
+                option.value = prov.id; // Usamos el ID de la DB
+                option.text = prov.Nombre;
+                selectProv.add(option);
+            });
+        });
+}
+
+// Ejecutar carga al abrir el módulo de lista
+document.addEventListener('DOMContentLoaded', cargarProveedores);
+
+// Lógica para Registrar Proveedor en la DB
+const formProv = document.getElementById('form-proveedores');
+formProv.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const datos = {
+        nombre: document.getElementById('prov-nombre').value,
+        rfc: document.getElementById('prov-rfc').value,
+        telefono: document.getElementById('prov-tel').value,
+        correo: document.getElementById('prov-correo').value
+    };
+
+    fetch('/api/proveedores/registrar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+    })
+    .then(res => res.text())
+    .then(mensaje => {
+        alert(mensaje);
+        formProv.reset();
+        cargarProveedores(); // Recargar datos
+    })
+    .catch(err => console.error('Error:', err));
+});
+</script>
+        </div>
+
+        <div id="modulo-productos" class="modulo">
+            <div class="card">
+                <div class="card-title">Catálogo de Productos</div>
+                <form id="form-productos">
+                    <input type="text" id="prod-nombre" placeholder="Nombre del Artículo" required>
+                    <select id="prod-prov" required>
+                        <option value="" disabled selected>Seleccionar Proveedor...</option>
+                    </select>
+                    <div class="row-inputs">
+                        <input type="number" id="prod-costo" placeholder="Costo" step="0.01" required>
+                        <input type="number" id="prod-venta" placeholder="Venta" step="0.01" required>
+                        <input type="number" id="prod-stock" placeholder="Stock" required>
+                        <input type="number" id="prod-stock" placeholder="Stock Minimo" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Agregar al Catálogo</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="lista-productos" class="modulo">
+            <div class="card">
+                <div class="card-title">Inventario de Productos</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>Costo</th>
+                            <th>Venta</th>
+                            <th>Stock</th>
+                             <th>Stock Minimo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-prod-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function mostrarModulo(idModulo, elemento) {
+            document.querySelectorAll('.modulo').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(idModulo).classList.add('active');
+            elemento.classList.add('active');
+        }
+        
+ // Lógica para Proveedores
+        const formProv = document.getElementById('form-proveedores');
+        formProv.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('prov-nombre').value;
+            const rfc = document.getElementById('prov-rfc').value;
+            const tel = document.getElementById('prov-tel').value;
+            const correo = document.getElementById('prov-correo').value;
+
+            // Agregar a la tabla
+            const tabla = document.getElementById('tabla-prov-body');
+            const fila = `<tr><td>${nombre}</td><td>${rfc}</td><td>${tel}</td><td>${correo}</td></tr>`;
+            tabla.innerHTML += fila;
+
+            // Agregar a la lista desplegable de productos
+            const selectProv = document.getElementById('prod-prov');
+            const option = document.createElement('option');
+            option.value = nombre;
+            option.text = nombre;
+            selectProv.add(option);
+
+            alert('Proveedor guardado');
+            formProv.reset();
+        });
+      
+
+        // Lógica para Productos
+        const formProd = document.getElementById('form-productos');
+        formProd.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('prod-nombre').value;
+            const prov = document.getElementById('prod-prov').value;
+            const costo = document.getElementById('prod-costo').value;
+            const venta = document.getElementById('prod-venta').value;
+            const stock = document.getElementById('prod-stock').value;
+            const stockminimo = document.getElementById('prod-stock-minimo').value;
+
+
+            const tabla = document.getElementById('tabla-prod-body');
+            const fila = `<tr><td>${nombre}</td><td>${prov}</td><td>$${costo}</td><td>$${venta}</td><td>${stock}</td><td>${stock_minimo}</td></tr>`;
+            tabla.innerHTML += fila;
+
+            alert('Producto agregado');
+            formProd.reset();
+        });
+    </script>
+</body>
+</html>
