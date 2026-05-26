@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - Dulcería Lupita</title>
+    <style>
+        :root {
+            --bg-azul: oklch(82.8% 0.111 230.318);
+            --texto-amarillo: oklch(94.5% 0.129 101.54);
+            --btn-rosita: oklch(89.9% 0.061 343.231);
+        }
+        body { background-color: var(--bg-azul); }
+        .text-amarillo { color: var(--texto-amarillo); }
+        .bg-rosita { background-color: var(--btn-rosita); color: oklch(0% 0 0); }
+        .escondido { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 drop-shadow-md text-center mt-8">
+        "DULCERIA LUPITA"
+    </h1>
+
+    <!-- Seleccion de Rol -->
+    <div id="seleccionRol" class="bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-2xl w-full border-8 border-white p-10">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-pink-300 mb-2">Sistema de Inventario</h2>
+            <p class="text-gray-500">Selecciona tu rol para continuar</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <button onclick="seleccionarRol('admin')" class="block bg-gradient-to-br from-pink-100 to-pink-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 border-2 border-pink-200">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">👑</div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Administrador</h3>
+                    <p class="text-gray-500 text-sm">Acceso completo al sistema</p>
+                </div>
+            </button>
+
+            <button onclick="seleccionarRol('usuario')" class="block bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 border-2 border-blue-200">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">👤</div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Usuario</h3>
+                    <p class="text-gray-500 text-sm">Acceso limitado</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="text-center">
+            <a href="admin.html" class="text-pink-400 font-bold hover:underline">Volver al menu</a>
+        </div>
+    </div>
+
+    <!-- Panel Principal -->
+    <div id="panelPrincipal" style="display:none;" class="bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-6xl w-full border-8 border-white p-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-pink-300">Inventario</h2>
+                <p class="text-gray-500">Rol actual: <strong id="rolActual" class="text-gray-800"></strong></p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="cerrarSesion()" class="bg-gray-200 px-4 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                    Cambiar Rol
+                </button>
+                <a href="admin.html" class="bg-rosita px-4 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                    Volver al menu
+                </a>
+            </div>
+        </div>
+
+        <!-- Menu de Modulos -->
+        <div id="menuModulos" class="flex flex-wrap gap-2 mb-6 p-4 bg-gray-50 rounded-xl">
+            <button onclick="mostrarModulo('ordenesCompra')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Ordenes de Compra</button>
+            <button onclick="mostrarModulo('comprasRecibidas')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Compras Recibidas</button>
+            <button onclick="mostrarModulo('devoluciones')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Devoluciones</button>
+            <button onclick="mostrarModulo('ventas')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Ventas</button>
+            <button onclick="mostrarModulo('proveedores')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Proveedores</button>
+            <button onclick="mostrarModulo('productos')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Productos</button>
+            <button onclick="mostrarModulo('usuarios')" class="bg-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-gray-200 hover:border-pink-300">Usuarios</button>
+            <!-- Solo Admin -->
+            <button id="btnInventario" onclick="mostrarModulo('inventario')" style="display:none;" class="bg-pink-100 px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-pink-300">Inventario CRUD</button>
+            <button id="btnReportes" onclick="mostrarModulo('reportes')" style="display:none;" class="bg-pink-100 px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-pink-300">Reportes</button>
+            <button id="btnConfiguracion" onclick="mostrarModulo('configuracion')" style="display:none;" class="bg-pink-100 px-4 py-2 rounded-full font-semibold shadow hover:shadow-md transition-all text-sm border border-pink-300">Configuracion</button>
+        </div>
+
+        <!-- Modulo: Ordenes de Compra -->
+        <div id="moduloOrdenesCompra" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-pink-50 to-white rounded-2xl p-6 border border-pink-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Ordenes de Compra</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="ordenProveedor" placeholder="Proveedor" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                    <input type="text" id="ordenProducto" placeholder="Producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                    <input type="number" id="ordenCantidad" placeholder="Cantidad" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="crearOrdenCompra()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Crear Orden</button>
+                    <button onclick="mostrarOrdenesCompra()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar Ordenes</button>
+                </div>
+                <pre id="listaOrdenes" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin ordenes</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Compras Recibidas -->
+        <div id="moduloComprasRecibidas" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border border-blue-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Compras Recibidas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <input type="number" id="compraOrdenID" placeholder="ID Orden" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-blue-200 outline-none transition-all">
+                    <input type="text" id="compraFecha" placeholder="Fecha (dd/mm/aaaa)" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-blue-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="registrarCompraRecibida()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Registrar</button>
+                    <button onclick="mostrarComprasRecibidas()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaComprasRecibidas" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin compras recibidas</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Devoluciones -->
+        <div id="moduloDevoluciones" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border border-purple-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Devoluciones</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="devProducto" placeholder="Producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    <input type="number" id="devCantidad" placeholder="Cantidad" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    <input type="text" id="devMotivo" placeholder="Motivo" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="registrarDevolucion()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Registrar</button>
+                    <button onclick="mostrarDevoluciones()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaDevoluciones" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin devoluciones</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Ventas -->
+        <div id="moduloVentas" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Ventas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="ventaProducto" placeholder="Producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    <input type="number" id="ventaCantidad" placeholder="Cantidad" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    <input type="number" id="ventaPrecio" placeholder="Precio" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="registrarVenta()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Registrar</button>
+                    <button onclick="mostrarVentas()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaVentas" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin ventas</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Proveedores -->
+        <div id="moduloProveedores" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-6 border border-orange-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Proveedores</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="provNombre" placeholder="Nombre" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-orange-200 outline-none transition-all">
+                    <input type="text" id="provTelefono" placeholder="Telefono" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-orange-200 outline-none transition-all">
+                    <input type="text" id="provEmail" placeholder="Email" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-orange-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="agregarProveedor()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Agregar</button>
+                    <button onclick="mostrarProveedores()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaProveedores" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin proveedores</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Productos -->
+        <div id="moduloProductos" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-yellow-50 to-white rounded-2xl p-6 border border-yellow-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Productos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="prodNombre" placeholder="Nombre" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-yellow-200 outline-none transition-all">
+                    <input type="number" id="prodPrecio" placeholder="Precio" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-yellow-200 outline-none transition-all">
+                    <input type="text" id="prodCategoria" placeholder="Categoria" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-yellow-200 outline-none transition-all">
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="agregarProducto()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Agregar</button>
+                    <button onclick="mostrarProductos()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaProductos" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin productos</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Usuarios -->
+        <div id="moduloUsuarios" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-6 border border-cyan-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Usuarios</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="usuNombre" placeholder="Nombre" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-cyan-200 outline-none transition-all">
+                    <input type="text" id="usuEmail" placeholder="Email" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-cyan-200 outline-none transition-all">
+                    <select id="usuRol" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-cyan-200 outline-none transition-all bg-white">
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mb-4">
+                    <button onclick="agregarUsuario()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Agregar</button>
+                    <button onclick="mostrarUsuarios()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Mostrar</button>
+                </div>
+                <pre id="listaUsuarios" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Sin usuarios</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Inventario CRUD (Solo Admin) -->
+        <div id="moduloInventario" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-pink-50 to-white rounded-2xl p-6 border border-pink-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Inventario CRUD (Solo Admin)</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Ingresar Producto -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Ingresar Producto</h4>
+                        <input type="text" id="nombreProducto" placeholder="Nombre producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all mb-3">
+                        <button onclick="crearProductoInventario()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Agregar</button>
+                    </div>
+
+                    <!-- Actualizar Producto -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Actualizar Producto</h4>
+                        <input type="number" id="updateID" placeholder="ID" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all mb-2">
+                        <input type="text" id="nuevoNombre" placeholder="Nuevo nombre" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all mb-3">
+                        <button onclick="actualizarProducto()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Actualizar</button>
+                    </div>
+
+                    <!-- Eliminar Producto -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Eliminar Producto</h4>
+                        <input type="number" id="deleteID" placeholder="ID" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all mb-3">
+                        <button onclick="eliminarProducto()" class="bg-red-400 text-white px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Eliminar</button>
+                    </div>
+
+                    <!-- Entrada -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Entrada</h4>
+                        <input type="number" id="entradaID" placeholder="ID producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all mb-2">
+                        <input type="number" id="cantidadEntrada" placeholder="Cantidad" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all mb-3">
+                        <button onclick="registrarEntrada()" class="bg-green-400 text-white px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Entrada</button>
+                    </div>
+
+                    <!-- Salida -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Salida</h4>
+                        <input type="number" id="salidaID" placeholder="ID producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-orange-200 outline-none transition-all mb-2">
+                        <input type="number" id="cantidadSalida" placeholder="Cantidad" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-orange-200 outline-none transition-all mb-3">
+                        <button onclick="registrarSalida()" class="bg-orange-400 text-white px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Salida</button>
+                    </div>
+
+                    <!-- Ver Inventario -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-gray-700 mb-3">Ver Inventario</h4>
+                        <button onclick="mostrarInventario()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm w-full">Mostrar</button>
+                    </div>
+                </div>
+
+                <pre id="resultado" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto mt-6">Sin productos</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Reportes (Solo Admin) -->
+        <div id="moduloReportes" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Reportes (Solo Admin)</h3>
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <button onclick="generarReporteVentas()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Reporte de Ventas</button>
+                    <button onclick="generarReporteInventario()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Reporte de Inventario</button>
+                    <button onclick="generarReporteDevoluciones()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Reporte de Devoluciones</button>
+                </div>
+                <pre id="reporteResultado" class="bg-white p-4 rounded-xl border border-gray-100 text-sm overflow-x-auto">Selecciona un reporte</pre>
+            </div>
+        </div>
+
+        <!-- Modulo: Configuracion (Solo Admin) -->
+        <div id="moduloConfiguracion" class="modulo" style="display:none;">
+            <div class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Configuracion (Solo Admin)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Nombre de la tienda:</label>
+                        <input type="text" id="configNombreTienda" value="Dulceria Lupita" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1 ml-2">Moneda:</label>
+                        <select id="configMoneda" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-pink-200 outline-none transition-all bg-white">
+                            <option value="MXN">MXN - Peso Mexicano</option>
+                            <option value="USD">USD - Dolar</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="guardarConfiguracion()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">Guardar Configuracion</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Variables globales
+let rolActual = '';
+let contadorID = 1;
+
+// Datos
+let ordenesCompra = [];
+let comprasRecibidas = [];
+let devoluciones = [];
+let ventas = [];
+let proveedores = [];
+let productos = [];
+let usuarios = [];
+let inventario = [];
+
+// Seleccion de Rol
+function seleccionarRol(rol) {
+    rolActual = rol;
+    document.getElementById('seleccionRol').style.display = 'none';
+    document.getElementById('panelPrincipal').style.display = 'block';
+    document.getElementById('rolActual').textContent = rol === 'admin' ? 'Administrador' : 'Usuario';
+    
+    // Mostrar/ocultar botones de admin
+    if (rol === 'admin') {
+        document.getElementById('btnInventario').style.display = 'inline';
+        document.getElementById('btnReportes').style.display = 'inline';
+        document.getElementById('btnConfiguracion').style.display = 'inline';
+    } else {
+        document.getElementById('btnInventario').style.display = 'none';
+        document.getElementById('btnReportes').style.display = 'none';
+        document.getElementById('btnConfiguracion').style.display = 'none';
+    }
+}
+
+function cerrarSesion() {
+    rolActual = '';
+    document.getElementById('seleccionRol').style.display = 'block';
+    document.getElementById('panelPrincipal').style.display = 'none';
+    ocultarTodosModulos();
+}
+
+function mostrarModulo(modulo) {
+    ocultarTodosModulos();
+    
+    const nombreModulo = 'modulo' + modulo.charAt(0).toUpperCase() + modulo.slice(1);
+    const elemento = document.getElementById(nombreModulo);
+    if (elemento) {
+        elemento.style.display = 'block';
+    }
+}
+
+function ocultarTodosModulos() {
+    const modulos = document.querySelectorAll('.modulo');
+    modulos.forEach(m => m.style.display = 'none');
+}
+
+// Ordenes de Compra
+function crearOrdenCompra() {
+    const proveedor = document.getElementById('ordenProveedor').value;
+    const producto = document.getElementById('ordenProducto').value;
+    const cantidad = parseInt(document.getElementById('ordenCantidad').value);
+    
+    if (!proveedor || !producto || !cantidad) {
+        alert('Completa todos los campos');
+        return;
+    }
+    
+    ordenesCompra.push({
+        id: contadorID++,
+        proveedor: proveedor,
+        producto: producto,
+        cantidad: cantidad,
+        estado: 'Pendiente',
+        fecha: new Date().toLocaleDateString()
+    });
+    
+    document.getElementById('ordenProveedor').value = '';
+    document.getElementById('ordenProducto').value = '';
+    document.getElementById('ordenCantidad').value = '';
+    alert('Orden creada');
+    mostrarOrdenesCompra();
+}
+
+function mostrarOrdenesCompra() {
+    let texto = '';
+    ordenesCompra.forEach(o => {
+        texto += `ID: ${o.id} | Proveedor: ${o.proveedor} | Producto: ${o.producto} | Cantidad: ${o.cantidad} | Estado: ${o.estado} | Fecha: ${o.fecha}\n`;
+    });
+    document.getElementById('listaOrdenes').textContent = texto || 'Sin ordenes';
+}
+
+// Compras Recibidas
+function registrarCompraRecibida() {
+    const ordenID = parseInt(document.getElementById('compraOrdenID').value);
+    const fecha = document.getElementById('compraFecha').value;
+    
+    const orden = ordenesCompra.find(o => o.id === ordenID);
+    if (!orden) {
+        alert('Orden no encontrada');
+        return;
+    }
+    
+    orden.estado = 'Recibida';
+    comprasRecibidas.push({
+        id: contadorID++,
+        ordenID: ordenID,
+        producto: orden.producto,
+        cantidad: orden.cantidad,
+        fecha: fecha || new Date().toLocaleDateString()
+    });
+    
+    document.getElementById('compraOrdenID').value = '';
+    document.getElementById('compraFecha').value = '';
+    alert('Compra recibida registrada');
+    mostrarComprasRecibidas();
+}
+
+function mostrarComprasRecibidas() {
+    let texto = '';
+    comprasRecibidas.forEach(c => {
+        texto += `ID: ${c.id} | Orden: ${c.ordenID} | Producto: ${c.producto} | Cantidad: ${c.cantidad} | Fecha: ${c.fecha}\n`;
+    });
+    document.getElementById('listaComprasRecibidas').textContent = texto || 'Sin compras recibidas';
+}
+
+// Devoluciones
+function registrarDevolucion() {
+    const producto = document.getElementById('devProducto').value;
+    const cantidad = parseInt(document.getElementById('devCantidad').value);
+    const motivo = document.getElementById('devMotivo').value;
+    
+    if (!producto || !cantidad || !motivo) {
+        alert('Completa todos los campos');
+        return;
+    }
+    
+    devoluciones.push({
+        id: contadorID++,
+        producto: producto,
+        cantidad: cantidad,
+        motivo: motivo,
+        fecha: new Date().toLocaleDateString()
+    });
+    
+    document.getElementById('devProducto').value = '';
+    document.getElementById('devCantidad').value = '';
+    document.getElementById('devMotivo').value = '';
+    alert('Devolucion registrada');
+    mostrarDevoluciones();
+}
+
+function mostrarDevoluciones() {
+    let texto = '';
+    devoluciones.forEach(d => {
+        texto += `ID: ${d.id} | Producto: ${d.producto} | Cantidad: ${d.cantidad} | Motivo: ${d.motivo} | Fecha: ${d.fecha}\n`;
+    });
+    document.getElementById('listaDevoluciones').textContent = texto || 'Sin devoluciones';
+}
+
+// Ventas
+function registrarVenta() {
+    const producto = document.getElementById('ventaProducto').value;
+    const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+    const precio = parseFloat(document.getElementById('ventaPrecio').value);
+    
+    if (!producto || !cantidad || !precio) {
+        alert('Completa todos los campos');
+        return;
+    }
+    
+    ventas.push({
+        id: contadorID++,
+        producto: producto,
+        cantidad: cantidad,
+        precio: precio,
+        total: cantidad * precio,
+        fecha: new Date().toLocaleDateString()
+    });
+    
+    document.getElementById('ventaProducto').value = '';
+    document.getElementById('ventaCantidad').value = '';
+    document.getElementById('ventaPrecio').value = '';
+    alert('Venta registrada');
+    mostrarVentas();
+}
+
+function mostrarVentas() {
+    let texto = '';
+    ventas.forEach(v => {
+        texto += `ID: ${v.id} | Producto: ${v.producto} | Cantidad: ${v.cantidad} | Precio: $${v.precio} | Total: $${v.total} | Fecha: ${v.fecha}\n`;
+    });
+    document.getElementById('listaVentas').textContent = texto || 'Sin ventas';
+}
+
+// Proveedores
+function agregarProveedor() {
+    const nombre = document.getElementById('provNombre').value;
+    const telefono = document.getElementById('provTelefono').value;
+    const email = document.getElementById('provEmail').value;
+    
+    if (!nombre) {
+        alert('Ingresa el nombre del proveedor');
+        return;
+    }
+    
+    proveedores.push({
+        id: contadorID++,
+        nombre: nombre,
+        telefono: telefono,
+        email: email
+    });
+    
+    document.getElementById('provNombre').value = '';
+    document.getElementById('provTelefono').value = '';
+    document.getElementById('provEmail').value = '';
+    alert('Proveedor agregado');
+    mostrarProveedores();
+}
+
+function mostrarProveedores() {
+    let texto = '';
+    proveedores.forEach(p => {
+        texto += `ID: ${p.id} | Nombre: ${p.nombre} | Telefono: ${p.telefono} | Email: ${p.email}\n`;
+    });
+    document.getElementById('listaProveedores').textContent = texto || 'Sin proveedores';
+}
+
+// Productos
+function agregarProducto() {
+    const nombre = document.getElementById('prodNombre').value;
+    const precio = parseFloat(document.getElementById('prodPrecio').value);
+    const categoria = document.getElementById('prodCategoria').value;
+    
+    if (!nombre) {
+        alert('Ingresa el nombre del producto');
+        return;
+    }
+    
+    productos.push({
+        id: contadorID++,
+        nombre: nombre,
+        precio: precio || 0,
+        categoria: categoria
+    });
+    
+    document.getElementById('prodNombre').value = '';
+    document.getElementById('prodPrecio').value = '';
+    document.getElementById('prodCategoria').value = '';
+    alert('Producto agregado');
+    mostrarProductos();
+}
+
+function mostrarProductos() {
+    let texto = '';
+    productos.forEach(p => {
+        texto += `ID: ${p.id} | Nombre: ${p.nombre} | Precio: $${p.precio} | Categoria: ${p.categoria}\n`;
+    });
+    document.getElementById('listaProductos').textContent = texto || 'Sin productos';
+}
+
+// Usuarios
+function agregarUsuario() {
+    const nombre = document.getElementById('usuNombre').value;
+    const email = document.getElementById('usuEmail').value;
+    const rol = document.getElementById('usuRol').value;
+    
+    if (!nombre || !email) {
+        alert('Completa todos los campos');
+        return;
+    }
+    
+    usuarios.push({
+        id: contadorID++,
+        nombre: nombre,
+        email: email,
+        rol: rol
+    });
+    
+    document.getElementById('usuNombre').value = '';
+    document.getElementById('usuEmail').value = '';
+    alert('Usuario agregado');
+    mostrarUsuarios();
+}
+
+function mostrarUsuarios() {
+    let texto = '';
+    usuarios.forEach(u => {
+        texto += `ID: ${u.id} | Nombre: ${u.nombre} | Email: ${u.email} | Rol: ${u.rol}\n`;
+    });
+    document.getElementById('listaUsuarios').textContent = texto || 'Sin usuarios';
+}
+
+// Inventario CRUD (Solo Admin)
+function crearProductoInventario() {
+    const nombre = document.getElementById('nombreProducto').value;
+    if (!nombre) {
+        alert('Ingresa un nombre');
+        return;
+    }
+    inventario.push({
+        id: contadorID++,
+        nombre: nombre,
+        stock: 0
+    });
+    document.getElementById('nombreProducto').value = '';
+    alert('Producto creado');
+    mostrarInventario();
+}
+
+function mostrarInventario() {
+    let texto = '';
+    inventario.forEach(p => {
+        texto += `ID: ${p.id} | Nombre: ${p.nombre} | Stock: ${p.stock}\n`;
+    });
+    document.getElementById('resultado').textContent = texto || 'Sin productos';
+}
+
+function actualizarProducto() {
+    const id = parseInt(document.getElementById('updateID').value);
+    const nuevoNombre = document.getElementById('nuevoNombre').value;
+    const producto = inventario.find(p => p.id === id);
+    if (!producto) {
+        alert('Producto no encontrado');
+        return;
+    }
+    producto.nombre = nuevoNombre;
+    document.getElementById('updateID').value = '';
+    document.getElementById('nuevoNombre').value = '';
+    alert('Producto actualizado');
+    mostrarInventario();
+}
+
+function eliminarProducto() {
+    const id = parseInt(document.getElementById('deleteID').value);
+    const index = inventario.findIndex(p => p.id === id);
+    if (index === -1) {
+        alert('Producto no encontrado');
+        return;
+    }
+    inventario.splice(index, 1);
+    document.getElementById('deleteID').value = '';
+    alert('Producto eliminado');
+    mostrarInventario();
+}
+
+function registrarEntrada() {
+    const id = parseInt(document.getElementById('entradaID').value);
+    const cantidad = parseInt(document.getElementById('cantidadEntrada').value);
+    const producto = inventario.find(p => p.id === id);
+    if (!producto) {
+        alert('Producto no encontrado');
+        return;
+    }
+    if (cantidad <= 0) {
+        alert('Cantidad invalida');
+        return;
+    }
+    producto.stock += cantidad;
+    document.getElementById('entradaID').value = '';
+    document.getElementById('cantidadEntrada').value = '';
+    alert('Entrada registrada');
+    mostrarInventario();
+}
+
+function registrarSalida() {
+    const id = parseInt(document.getElementById('salidaID').value);
+    const cantidad = parseInt(document.getElementById('cantidadSalida').value);
+    const producto = inventario.find(p => p.id === id);
+    if (!producto) {
+        alert('Producto no encontrado');
+        return;
+    }
+    if (cantidad <= 0) {
+        alert('Cantidad invalida');
+        return;
+    }
+    if (producto.stock < cantidad) {
+        alert('Stock insuficiente');
+        return;
+    }
+    producto.stock -= cantidad;
+    document.getElementById('salidaID').value = '';
+    document.getElementById('cantidadSalida').value = '';
+    alert('Salida registrada');
+    mostrarInventario();
+}
+
+// Reportes (Solo Admin)
+function generarReporteVentas() {
+    let total = 0;
+    ventas.forEach(v => total += v.total);
+    document.getElementById('reporteResultado').textContent = `Reporte de Ventas\nTotal de ventas: ${ventas.length}\nMonto total: $${total}`;
+}
+
+function generarReporteInventario() {
+    let texto = 'Reporte de Inventario\n';
+    inventario.forEach(p => {
+        texto += `${p.nombre}: ${p.stock} unidades\n`;
+    });
+    document.getElementById('reporteResultado').textContent = texto || 'Sin productos en inventario';
+}
+
+function generarReporteDevoluciones() {
+    document.getElementById('reporteResultado').textContent = `Reporte de Devoluciones\nTotal de devoluciones: ${devoluciones.length}`;
+}
+
+// Configuracion (Solo Admin)
+function guardarConfiguracion() {
+    const nombreTienda = document.getElementById('configNombreTienda').value;
+    const moneda = document.getElementById('configMoneda').value;
+    alert(`Configuracion guardada:\nTienda: ${nombreTienda}\nMoneda: ${moneda}`);
+}
+</script>
+
+</body>
+</html>

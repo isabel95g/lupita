@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro de Alertas — Dulcería Lupita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg-main:#f8fafc;--bg-card:#112240;--bg-sidebar:#1a3560;--accent:#2d6aad;--accent2:#0d9488;--border:rgba(45,106,173,.20);--text-main:#1e293b;--text-muted:#64748b;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background-color:var(--bg-main);color:var(--text-main);}
+    .glass{background:#fff;border:1px solid #e2e8f0;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+    .section-title{border-left:4px solid var(--accent2);padding-left:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:#f1f5f9;font-weight:700;color:var(--text-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;}
+    td{padding:12px 14px;border-bottom:1px solid #f1f5f9;font-size:.875rem;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#f8fafc;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:800;}
+    .badge-danger{background:#fee2e2;color:#dc2626;}
+    .badge-warning{background:#fef3c7;color:#d97706;}
+    .badge-success{background:#d1fae5;color:#059669;}
+    .badge-purple{background:#ede9fe;color:#7c3aed;}
+    .badge-blue{background:#dbeafe;color:#1d4ed8;}
+    .btn-back{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 20px;border-radius:999px;font-weight:700;font-size:.85rem;text-decoration:none;transition:background .2s;}
+    .btn-back:hover{background:rgba(255,255,255,.28);}
+    .stat-box{background:#fff;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.06);border-radius:1rem;padding:1.25rem;text-align:center;flex:1;min-width:130px;}
+    .empty{text-align:center;padding:40px;color:var(--text-muted);font-size:.9rem;}
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <header style="background:linear-gradient(135deg,var(--accent) 0%,#1a3560 100%);" class="px-8 py-5 flex items-center justify-between shadow-lg">
+    <div>
+      <h1 class="text-2xl font-black text-white tracking-tight">🍬 Dulcería Lupita</h1>
+      <p class="text-xs text-white/70 mt-0.5 font-semibold uppercase tracking-widest">Centro de Alertas</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-white/70 text-xs hidden md:block">📅 <%- fechaActual %></span>
+      <a href="/notificaciones" class="btn-back">← Notificaciones</a>
+      <a href="/admin" class="btn-back">Menú principal</a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+
+    <!-- Resumen de contadores -->
+    <div class="flex flex-wrap gap-4 mb-8">
+      <div class="stat-box">
+        <p class="text-3xl font-black" style="color:#d97706"><%= notificaciones ? notificaciones.stockBajo : 0 %></p>
+        <p class="text-xs font-bold mt-1 uppercase tracking-wide" style="color:var(--text-muted)">Stock bajo</p>
+      </div>
+      <div class="stat-box">
+        <p class="text-3xl font-black" style="color:#dc2626"><%= notificaciones ? notificaciones.stockCritico : 0 %></p>
+        <p class="text-xs font-bold mt-1 uppercase tracking-wide" style="color:var(--text-muted)">Stock crítico</p>
+      </div>
+      <div class="stat-box">
+        <p class="text-3xl font-black" style="color:#d97706"><%= proximoCaducar ? proximoCaducar.length : 0 %></p>
+        <p class="text-xs font-bold mt-1 uppercase tracking-wide" style="color:var(--text-muted)">Caducan 30 días</p>
+      </div>
+      <div class="stat-box">
+        <p class="text-3xl font-black" style="color:#dc2626"><%= proximoCaducar ? proximoCaducar.filter(p=>p.Dias_restantes<=7).length : 0 %></p>
+        <p class="text-xs font-bold mt-1 uppercase tracking-wide" style="color:var(--text-muted)">Caducan 7 días</p>
+      </div>
+      <div class="stat-box">
+        <p class="text-3xl font-black" style="color:#7c3aed"><%= devolucionesPendientes ? devolucionesPendientes.length : 0 %></p>
+        <p class="text-xs font-bold mt-1 uppercase tracking-wide" style="color:var(--text-muted)">Devoluciones</p>
+      </div>
+    </div>
+
+    <!-- Umbrales configurados en alertas_stock -->
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-xl font-black mb-1 section-title">🎯 Umbrales configurados por producto</h2>
+      <p class="text-xs mb-5 ml-4" style="color:var(--text-muted)">Productos con umbral personalizado en alertas_stock. Los demás usan el valor por defecto (10).</p>
+      <% if (alertasStock && alertasStock.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>Producto</th><th>Stock actual</th><th>Mínimo configurado</th><th>Máximo configurado</th><th>Estado alerta</th></tr></thead>
+            <tbody>
+              <% alertasStock.forEach(a => { %>
+                <tr>
+                  <td class="font-semibold"><%= a.Nombre %></td>
+                  <td>
+                    <% if(a.Stock_anual <= a.Stock_minimo){ %>
+                      <span class="badge badge-danger"><%= a.Stock_anual %></span>
+                    <% } else { %>
+                      <span class="font-semibold" style="color:var(--accent2)"><%= a.Stock_anual %></span>
+                    <% } %>
+                  </td>
+                  <td><span class="badge badge-warning"><%= a.Stock_minimo %></span></td>
+                  <td><span class="badge badge-blue"><%= a.Stock_maximo %></span></td>
+                  <td><span class="badge <%= a.Estado_alerta==='Activa'?'badge-success':'badge-danger' %>"><%= a.Estado_alerta %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">No hay umbrales configurados. Se usa el valor por defecto (10) para todos los productos.</div>
+      <% } %>
+    </section>
+
+    <!-- Stock Bajo con umbral dinámico -->
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-xl font-black mb-5 section-title">⚠️ Productos bajo su umbral de stock</h2>
+      <% if (stockBajo && stockBajo.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>ID</th><th>Producto</th><th>Stock actual</th><th>Umbral</th><th>Precio</th><th>Estado</th></tr></thead>
+            <tbody>
+              <% stockBajo.forEach(p => { %>
+                <tr>
+                  <td style="color:var(--text-muted)">#<%= p.ID_producto %></td>
+                  <td class="font-semibold"><%= p.Nombre %></td>
+                  <td><span class="badge <%= p.Stock_anual<=Math.floor(p.Umbral/2)?'badge-danger':'badge-warning' %>"><%= p.Stock_anual %></span></td>
+                  <td style="color:var(--text-muted)">≤ <%= p.Umbral %></td>
+                  <td class="font-bold" style="color:var(--accent)">$<%= p.Precio_unitario %></td>
+                  <td><span class="badge <%= p.Stock_anual<=Math.floor(p.Umbral/2)?'badge-danger':'badge-warning' %>"><%= p.Stock_anual<=Math.floor(p.Umbral/2)?'⚠️ CRÍTICO':'⚠️ BAJO' %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">✅ Todos los productos están sobre su umbral configurado</div>
+      <% } %>
+    </section>
+
+    <!-- Próximos a caducar -->
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-xl font-black mb-5 section-title">📅 Próximos a caducar</h2>
+      <% if (proximoCaducar && proximoCaducar.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>ID</th><th>Producto</th><th>Stock</th><th>Fecha caducidad</th><th>Días restantes</th><th>Estado</th></tr></thead>
+            <tbody>
+              <% proximoCaducar.forEach(p => { %>
+                <tr>
+                  <td style="color:var(--text-muted)">#<%= p.ID_producto %></td>
+                  <td class="font-semibold"><%= p.Nombre %></td>
+                  <td><%= p.Stock_anual %></td>
+                  <td style="color:var(--text-muted)"><%= formatearFecha(p.Fecha_caducidad) %></td>
+                  <td><span class="badge <%= p.Dias_restantes<=7?'badge-danger':'badge-warning' %>"><%= p.Dias_restantes %> días</span></td>
+                  <td><span class="badge <%= p.Dias_restantes<=7?'badge-danger':'badge-warning' %>"><%= p.Dias_restantes<=7?'⚠️ URGENTE':'⌛ Próximo' %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">✅ No hay productos próximos a caducar</div>
+      <% } %>
+    </section>
+
+    <!-- Devoluciones recientes -->
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-xl font-black mb-1 section-title">🔄 Devoluciones recientes</h2>
+      <p class="text-xs mb-5 ml-4" style="color:var(--text-muted)">Ajustes registrados con motivo de devolución en los últimos 30 días.</p>
+      <% if (devolucionesPendientes && devolucionesPendientes.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Motivo</th><th>Fecha</th></tr></thead>
+            <tbody>
+              <% devolucionesPendientes.forEach(d => { %>
+                <tr>
+                  <td style="color:var(--text-muted)">#<%= d.ID_ajuste %></td>
+                  <td class="font-semibold"><%= d.Producto %></td>
+                  <td><span class="badge badge-purple"><%= d.Cantidad_ajustada %></span></td>
+                  <td style="color:var(--text-muted)"><%= d.Motivo %></td>
+                  <td style="color:var(--text-muted)"><%= formatearFecha(d.Fecha_ajuste) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">✅ No hay devoluciones en los últimos 30 días</div>
+      <% } %>
+    </section>
+
+    <!-- Inventario completo -->
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-xl font-black mb-5 section-title">📦 Inventario completo</h2>
+      <% if (productos && productos.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Stock</th><th>Umbral mín.</th><th>Unidad</th><th>Precio</th><th>Caducidad</th></tr></thead>
+            <tbody>
+              <% productos.forEach(p => { %>
+                <tr>
+                  <td style="color:var(--text-muted)">#<%= p.ID_producto %></td>
+                  <td class="font-semibold"><%= p.Nombre %></td>
+                  <td style="color:var(--text-muted)"><%= p.Nombre_categoria %></td>
+                  <td>
+                    <% if(p.Stock_anual <= p.Umbral){ %>
+                      <span class="badge <%= p.Stock_anual<=Math.floor(p.Umbral/2)?'badge-danger':'badge-warning' %>"><%= p.Stock_anual %></span>
+                    <% } else { %>
+                      <span class="font-semibold"><%= p.Stock_anual %></span>
+                    <% } %>
+                  </td>
+                  <td style="color:var(--text-muted)"><%= p.Umbral %></td>
+                  <td style="color:var(--text-muted)"><%= p.Unidad_medida %></td>
+                  <td class="font-bold" style="color:var(--accent)">$<%= p.Precio_unitario %></td>
+                  <td style="color:var(--text-muted)"><%= p.Fecha_caducidad?formatearFecha(p.Fecha_caducidad):'-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">No hay productos registrados</div>
+      <% } %>
+    </section>
+
+    <div class="flex flex-wrap gap-3 mt-2">
+      <a href="/notificaciones" class="px-6 py-3 rounded-full font-black text-sm text-white shadow transition-all active:scale-95" style="background:var(--accent2)">🔔 Notificaciones</a>
+      <a href="/inventario" class="px-6 py-3 rounded-full font-black text-sm text-white shadow transition-all active:scale-95" style="background:var(--accent)">📦 Inventario</a>
+      <a href="/devoluciones" class="px-6 py-3 rounded-full font-black text-sm text-white shadow transition-all active:scale-95" style="background:#7c3aed">🔄 Devoluciones</a>
+    </div>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sin conexion — Dulceria Lupita</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#2d6aad;--accent2:#0d9488;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+    .card{background:#fff;border:1px solid #e2e8f0;box-shadow:0 8px 40px rgba(0,0,0,0.10);border-radius:2rem;padding:3rem;max-width:480px;width:100%;text-align:center;}
+    .icon{font-size:80px;margin-bottom:1.5rem;animation:float 3s ease-in-out infinite;}
+    @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+    .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#cbd5e1;margin:0 3px;animation:pulse 1.4s ease-in-out infinite;}
+    .dot:nth-child(2){animation-delay:.2s;}
+    .dot:nth-child(3){animation-delay:.4s;}
+    @keyframes pulse{0%,80%,100%{transform:scale(1);background:#cbd5e1;}40%{transform:scale(1.4);background:var(--accent2);}}
+    .btn{background:var(--accent2);color:#fff;border:none;padding:14px 32px;border-radius:999px;font-weight:900;font-size:.9rem;cursor:pointer;transition:all .2s;letter-spacing:.05em;}
+    .btn:hover{opacity:.88;transform:scale(1.04);}
+    .btn-sec{background:transparent;color:var(--accent);border:2px solid var(--accent);margin-top:.75rem;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">&#128268;</div>
+    <h1 class="text-3xl font-black text-slate-800 mb-2">Sin conexion</h1>
+    <p class="text-slate-500 font-semibold mb-2">No se puede conectar al servidor.</p>
+    <p class="text-sm text-slate-400 mb-8">Verifica que el servidor este corriendo y que tengas red disponible.</p>
+
+    <div id="estado-red" class="mb-6">
+      <div id="checking" class="flex items-center justify-center gap-2 text-sm font-bold text-slate-500">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span>Verificando conexion...</span>
+      </div>
+      <div id="online-msg"  style="display:none;" class="text-green-600 font-black text-sm">Conexion restaurada, redirigiendo...</div>
+      <div id="offline-msg" style="display:none;" class="text-red-500 font-black text-sm">Sin red disponible</div>
+    </div>
+
+    <div class="flex flex-col items-center gap-2">
+      <button class="btn w-full" onclick="intentarReconectar()">Reintentar conexion</button>
+      <button class="btn btn-sec w-full" onclick="window.history.back()">Volver atras</button>
+    </div>
+
+    <p class="text-xs text-slate-300 mt-8 font-semibold">DULCERIA LUPITA &mdash; Sistema de Inventario</p>
+  </div>
+
+  <script>
+    var intentos = 0;
+
+    function intentarReconectar() {
+      document.getElementById('checking').style.display = 'flex';
+      document.getElementById('online-msg').style.display  = 'none';
+      document.getElementById('offline-msg').style.display = 'none';
+
+      fetch('/api/notificaciones', { method: 'GET', cache: 'no-cache' })
+        .then(function(r) {
+          if (r.ok) {
+            document.getElementById('checking').style.display  = 'none';
+            document.getElementById('online-msg').style.display = 'block';
+            setTimeout(function(){ window.location.href = '/'; }, 1500);
+          } else {
+            mostrarOffline();
+          }
+        })
+        .catch(function() { mostrarOffline(); });
+    }
+
+    function mostrarOffline() {
+      intentos++;
+      document.getElementById('checking').style.display   = 'none';
+      document.getElementById('offline-msg').style.display = 'block';
+      document.getElementById('offline-msg').textContent =
+        'Sin conexion' + (intentos > 1 ? ' (intento ' + intentos + ')' : '');
+    }
+
+    // Reconexion automatica cada 10 segundos
+    setInterval(function() {
+      fetch('/api/notificaciones', { cache: 'no-cache' })
+        .then(function(r) {
+          if (r.ok) {
+            document.getElementById('online-msg').style.display = 'block';
+            document.getElementById('offline-msg').style.display = 'none';
+            document.getElementById('checking').style.display   = 'none';
+            setTimeout(function(){ window.location.href = '/'; }, 1000);
+          }
+        }).catch(function(){});
+    }, 10000);
+
+    // Verificar al cargar
+    intentarReconectar();
+  </script>
+</body>
+</html>

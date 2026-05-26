@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salidas y Devoluciones - Dulcería Lupita</title>
+    <style>
+        :root {
+            --bg-azul: oklch(82.8% 0.111 230.318);
+            --texto-amarillo: oklch(94.5% 0.129 101.54);
+            --btn-rosita: oklch(89.9% 0.061 343.231);
+        }
+        body { background-color: var(--bg-azul); }
+        .text-amarillo { color: var(--texto-amarillo); }
+        .bg-rosita { background-color: var(--btn-rosita); color: oklch(0% 0 0); }
+        .escondido { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <h1 class="text-5xl md:text-7xl font-black text-amarillo mb-8 drop-shadow-md text-center mt-8">
+        "DULCERIA LUPITA"
+    </h1>
+
+    <!-- Panel Principal -->
+    <div class="bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden max-w-6xl w-full border-8 border-white p-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-pink-300">Salidas y Devoluciones</h2>
+                <p class="text-gray-500">Gestiona salidas a sucursales y devoluciones a proveedores</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/admin" class="bg-rosita px-4 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                    Volver al menu
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabs de navegacion -->
+        <div class="flex gap-2 mb-6 p-2 bg-gray-50 rounded-xl">
+            <button onclick="mostrarSeccion('salidas')" id="tabSalidas" class="flex-1 bg-rosita px-4 py-3 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                Salidas a Sucursales
+            </button>
+            <button onclick="mostrarSeccion('devoluciones')" id="tabDevoluciones" class="flex-1 bg-white px-4 py-3 rounded-full font-bold shadow hover:shadow-md transition-all text-sm border border-gray-200">
+                Devoluciones a Proveedores
+            </button>
+        </div>
+
+        <!-- Seccion: Salidas a Sucursales -->
+        <div id="seccionSalidas" class="seccion">
+            <div class="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="text-4xl">📦</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Registro de Salidas</h3>
+                        <p class="text-gray-500 text-sm">Salida de productos hacia las sucursales</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Sucursal Destino</label>
+                        <select id="salidaSucursal" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all bg-white">
+                            <option value="">Seleccionar sucursal</option>
+                            <option value="sucursal1">Sucursal Centro</option>
+                            <option value="sucursal2">Sucursal Norte</option>
+                            <option value="sucursal3">Sucursal Sur</option>
+                            <option value="sucursal4">Sucursal Oriente</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Producto</label>
+                        <input type="text" id="salidaProducto" placeholder="Nombre del producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Cantidad</label>
+                        <input type="number" id="salidaCantidad" placeholder="0" min="1" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Unidad de Medida</label>
+                        <input type="text" id="salidaUnidadDeMedida" placeholder="Unidad de Medida" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Fecha</label>
+                        <input type="date" id="salidaFecha" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Responsable</label>
+                        <input type="text" id="salidaResponsable" placeholder="Nombre del responsable" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Observaciones</label>
+                        <input type="text" id="salidaObservaciones" placeholder="Notas adicionales (opcional)" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-green-200 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mb-6">
+                    <button onclick="registrarSalida()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                        Registrar Salida
+                    </button>
+                    <button onclick="limpiarFormularioSalida()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                        Limpiar
+                    </button>
+                </div>
+
+                <!-- Tabla de Salidas -->
+                <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                    <div class="p-4 bg-green-50 border-b border-green-100">
+                        <h4 class="font-bold text-gray-700">Historial de Salidas</h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ID</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Fecha</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Sucursal</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Producto</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Cantidad</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Responsable</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaSalidas">
+                                <tr class="border-t border-gray-50">
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">No hay salidas registradas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seccion: Devoluciones a Proveedores -->
+        <div id="seccionDevoluciones" class="seccion escondido">
+            <div class="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border border-purple-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="text-4xl">🔄</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Devoluciones a Proveedores</h3>
+                        <p class="text-gray-500 text-sm">Gestiona productos devueltos a los proveedores</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Proveedor</label>
+                        <select id="devProveedor" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all bg-white">
+                            <option value="">Seleccionar proveedor</option>
+                            <option value="prov1">Dulces El Mexicano</option>
+                            <option value="prov2">Distribuidora La Paloma</option>
+                            <option value="prov3">Golosinas del Norte</option>
+                            <option value="prov4">Chocolates Finos SA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Producto</label>
+                        <input type="text" id="devProducto" placeholder="Nombre del producto" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Cantidad</label>
+                        <input type="number" id="devCantidad" placeholder="0" min="1" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Fecha</label>
+                        <input type="date" id="devFecha" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Motivo de Devolucion</label>
+                        <select id="devMotivo" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all bg-white">
+                            <option value="">Seleccionar motivo</option>
+                            <option value="defectuoso">Producto defectuoso</option>
+                            <option value="vencido">Producto vencido</option>
+                            <option value="danado">Empaque danado</option>
+                            <option value="incorrecto">Producto incorrecto</option>
+                            <option value="exceso">Exceso de inventario</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Descripcion del problema</label>
+                        <input type="text" id="devDescripcion" placeholder="Detalle del motivo de devolucion" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Estado</label>
+                        <select id="devEstado" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all bg-white">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="aprobada">Aprobada</option>
+                            <option value="rechazada">Rechazada</option>
+                            <option value="completada">Completada</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Numero de Factura (opcional)</label>
+                        <input type="text" id="devFactura" placeholder="FAC-0000" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Responsable</label>
+                        <input type="text" id="devResponsable" placeholder="Nombre del responsable" class="w-full px-4 py-2 rounded-full border-2 border-gray-100 focus:border-purple-200 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mb-6">
+                    <button onclick="registrarDevolucionProveedor()" class="bg-rosita px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                        Registrar Devolucion
+                    </button>
+                    <button onclick="limpiarFormularioDevolucion()" class="bg-gray-200 px-6 py-2 rounded-full font-bold shadow-md hover:brightness-95 transition-all text-sm">
+                        Limpiar
+                    </button>
+                </div>
+
+                <!-- Tabla de Devoluciones -->
+                <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                    <div class="p-4 bg-purple-50 border-b border-purple-100">
+                        <h4 class="font-bold text-gray-700">Historial de Devoluciones a Proveedores</h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ID</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Fecha</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Proveedor</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Producto</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Cantidad</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Motivo</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Estado</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaDevoluciones">
+                                <tr class="border-t border-gray-50">
+                                    <td colspan="8" class="px-4 py-8 text-center text-gray-400">No hay devoluciones registradas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen / Estadisticas -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-gradient-to-br from-green-100 to-green-50 rounded-xl p-4 border border-green-200">
+                <div class="text-3xl mb-2">📤</div>
+                <p class="text-sm text-gray-500">Total Salidas</p>
+                <p id="totalSalidas" class="text-2xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-100 to-purple-50 rounded-xl p-4 border border-purple-200">
+                <div class="text-3xl mb-2">🔄</div>
+                <p class="text-sm text-gray-500">Total Devoluciones</p>
+                <p id="totalDevoluciones" class="text-2xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-xl p-4 border border-yellow-200">
+                <div class="text-3xl mb-2">⏳</div>
+                <p class="text-sm text-gray-500">Dev. Pendientes</p>
+                <p id="devPendientes" class="text-2xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl p-4 border border-blue-200">
+                <div class="text-3xl mb-2">✅</div>
+                <p class="text-sm text-gray-500">Dev. Completadas</p>
+                <p id="devCompletadas" class="text-2xl font-bold text-gray-800">0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos en memoria
+        let salidas = [];
+        let devoluciones = [];
+        let contadorSalida = 1;
+        let contadorDevolucion = 1;
+
+        // Mostrar seccion
+        function mostrarSeccion(seccion) {
+            document.querySelectorAll('.seccion').forEach(s => s.classList.add('escondido'));
+            
+            if (seccion === 'salidas') {
+                document.getElementById('seccionSalidas').classList.remove('escondido');
+                document.getElementById('tabSalidas').classList.add('bg-rosita');
+                document.getElementById('tabSalidas').classList.remove('bg-white', 'border', 'border-gray-200');
+                document.getElementById('tabDevoluciones').classList.remove('bg-rosita');
+                document.getElementById('tabDevoluciones').classList.add('bg-white', 'border', 'border-gray-200');
+            } else {
+                document.getElementById('seccionDevoluciones').classList.remove('escondido');
+                document.getElementById('tabDevoluciones').classList.add('bg-rosita');
+                document.getElementById('tabDevoluciones').classList.remove('bg-white', 'border', 'border-gray-200');
+                document.getElementById('tabSalidas').classList.remove('bg-rosita');
+                document.getElementById('tabSalidas').classList.add('bg-white', 'border', 'border-gray-200');
+            }
+        }
+
+        // Registrar salida
+        function registrarSalida() {
+            const sucursal = document.getElementById('salidaSucursal').value;
+            const producto = document.getElementById('salidaProducto').value;
+            const cantidad = document.getElementById('salidaCantidad').value;
+            const fecha = document.getElementById('salidaFecha').value;
+            const responsable = document.getElementById('salidaResponsable').value;
+            const observaciones = document.getElementById('salidaObservaciones').value;
+
+            if (!sucursal || !producto || !cantidad || !fecha || !responsable) {
+                sdToast('Por favor complete todos los campos obligatorios');
+                return;
+            }
+
+            const sucursalNombres = {
+                'sucursal1': 'Sucursal Centro',
+                'sucursal2': 'Sucursal Norte',
+                'sucursal3': 'Sucursal Sur',
+                'sucursal4': 'Sucursal Oriente'
+            };
+
+            const salida = {
+                id: contadorSalida++,
+                sucursal: sucursalNombres[sucursal],
+                producto,
+                cantidad: parseInt(cantidad),
+                fecha,
+                responsable,
+                observaciones
+            };
+
+            salidas.push(salida);
+            actualizarTablaSalidas();
+            actualizarEstadisticas();
+            limpiarFormularioSalida();
+            sdToast('Salida registrada exitosamente');
+        }
+
+        // Actualizar tabla de salidas
+        function actualizarTablaSalidas() {
+            const tbody = document.getElementById('tablaSalidas');
+            
+            if (salidas.length === 0) {
+                tbody.innerHTML = `
+                    <tr class="border-t border-gray-50">
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-400">No hay salidas registradas</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = salidas.map(s => `
+                <tr class="border-t border-gray-50 hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 font-semibold">${s.id}</td>
+                    <td class="px-4 py-3">${s.fecha}</td>
+                    <td class="px-4 py-3">${s.sucursal}</td>
+                    <td class="px-4 py-3">${s.producto}</td>
+                    <td class="px-4 py-3">${s.cantidad}</td>
+                    <td class="px-4 py-3">${s.responsable}</td>
+                    <td class="px-4 py-3">
+                        <button onclick="eliminarSalida(${s.id})" class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Eliminar salida
+        function eliminarSalida(id) {
+            if (confirm('¿Esta seguro de eliminar esta salida?')) {
+                salidas = salidas.filter(s => s.id !== id);
+                actualizarTablaSalidas();
+                actualizarEstadisticas();
+            }
+        }
+
+        // Limpiar formulario de salida
+        function limpiarFormularioSalida() {
+            document.getElementById('salidaSucursal').value = '';
+            document.getElementById('salidaProducto').value = '';
+            document.getElementById('salidaCantidad').value = '';
+            document.getElementById('salidaFecha').value = '';
+            document.getElementById('salidaResponsable').value = '';
+            document.getElementById('salidaObservaciones').value = '';
+        }
+
+        // Registrar devolucion a proveedor
+        function registrarDevolucionProveedor() {
+            const proveedor = document.getElementById('devProveedor').value;
+            const producto = document.getElementById('devProducto').value;
+            const cantidad = document.getElementById('devCantidad').value;
+            const fecha = document.getElementById('devFecha').value;
+            const motivo = document.getElementById('devMotivo').value;
+            const descripcion = document.getElementById('devDescripcion').value;
+            const estado = document.getElementById('devEstado').value;
+            const factura = document.getElementById('devFactura').value;
+            const responsable = document.getElementById('devResponsable').value;
+
+            if (!proveedor || !producto || !cantidad || !fecha || !motivo || !responsable) {
+                sdToast('Por favor complete todos los campos obligatorios');
+                return;
+            }
+
+            const proveedorNombres = {
+                'prov1': 'Dulces El Mexicano',
+                'prov2': 'Distribuidora La Paloma',
+                'prov3': 'Golosinas del Norte',
+                'prov4': 'Chocolates Finos SA'
+            };
+
+            const motivoNombres = {
+                'defectuoso': 'Producto defectuoso',
+                'vencido': 'Producto vencido',
+                'danado': 'Empaque danado',
+                'incorrecto': 'Producto incorrecto',
+                'exceso': 'Exceso de inventario',
+                'otro': 'Otro'
+            };
+
+            const devolucion = {
+                id: contadorDevolucion++,
+                proveedor: proveedorNombres[proveedor],
+                producto,
+                cantidad: parseInt(cantidad),
+                fecha,
+                motivo: motivoNombres[motivo],
+                descripcion,
+                estado,
+                factura,
+                responsable
+            };
+
+            devoluciones.push(devolucion);
+            actualizarTablaDevoluciones();
+            actualizarEstadisticas();
+            limpiarFormularioDevolucion();
+            sdToast('Devolucion registrada exitosamente');
+        }
+
+        // Actualizar tabla de devoluciones
+        function actualizarTablaDevoluciones() {
+            const tbody = document.getElementById('tablaDevoluciones');
+            
+            if (devoluciones.length === 0) {
+                tbody.innerHTML = `
+                    <tr class="border-t border-gray-50">
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-400">No hay devoluciones registradas</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const estadoClases = {
+                'pendiente': 'bg-yellow-100 text-yellow-800',
+                'aprobada': 'bg-blue-100 text-blue-800',
+                'rechazada': 'bg-red-100 text-red-800',
+                'completada': 'bg-green-100 text-green-800'
+            };
+
+            tbody.innerHTML = devoluciones.map(d => `
+                <tr class="border-t border-gray-50 hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 font-semibold">${d.id}</td>
+                    <td class="px-4 py-3">${d.fecha}</td>
+                    <td class="px-4 py-3">${d.proveedor}</td>
+                    <td class="px-4 py-3">${d.producto}</td>
+                    <td class="px-4 py-3">${d.cantidad}</td>
+                    <td class="px-4 py-3">${d.motivo}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${estadoClases[d.estado]}">
+                            ${d.estado.charAt(0).toUpperCase() + d.estado.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button onclick="cambiarEstadoDevolucion(${d.id})" class="text-blue-500 hover:text-blue-700 font-semibold text-sm mr-2">Editar</button>
+                        <button onclick="eliminarDevolucion(${d.id})" class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Cambiar estado de devolucion
+        function cambiarEstadoDevolucion(id) {
+            const devolucion = devoluciones.find(d => d.id === id);
+            if (!devolucion) return;
+
+            const estados = ['pendiente', 'aprobada', 'rechazada', 'completada'];
+            const nuevoEstado = prompt('Ingrese el nuevo estado (pendiente, aprobada, rechazada, completada):', devolucion.estado);
+            
+            if (nuevoEstado && estados.includes(nuevoEstado.toLowerCase())) {
+                devolucion.estado = nuevoEstado.toLowerCase();
+                actualizarTablaDevoluciones();
+                actualizarEstadisticas();
+            } else if (nuevoEstado) {
+                sdToast('Estado no valido');
+            }
+        }
+
+        // Eliminar devolucion
+        function eliminarDevolucion(id) {
+            if (confirm('¿Esta seguro de eliminar esta devolucion?')) {
+                devoluciones = devoluciones.filter(d => d.id !== id);
+                actualizarTablaDevoluciones();
+                actualizarEstadisticas();
+            }
+        }
+
+        // Limpiar formulario de devolucion
+        function limpiarFormularioDevolucion() {
+            document.getElementById('devProveedor').value = '';
+            document.getElementById('devProducto').value = '';
+            document.getElementById('devCantidad').value = '';
+            document.getElementById('devFecha').value = '';
+            document.getElementById('devMotivo').value = '';
+            document.getElementById('devDescripcion').value = '';
+            document.getElementById('devEstado').value = 'pendiente';
+            document.getElementById('devFactura').value = '';
+            document.getElementById('devResponsable').value = '';
+        }
+
+        // Actualizar estadisticas
+        function actualizarEstadisticas() {
+            document.getElementById('totalSalidas').textContent = salidas.length;
+            document.getElementById('totalDevoluciones').textContent = devoluciones.length;
+            document.getElementById('devPendientes').textContent = devoluciones.filter(d => d.estado === 'pendiente').length;
+            document.getElementById('devCompletadas').textContent = devoluciones.filter(d => d.estado === 'completada').length;
+        }
+
+        // Inicializar fecha actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('salidaFecha').value = hoy;
+            document.getElementById('devFecha').value = hoy;
+        });
+    </script>
+<!-- ═══ BOTÓN FLOTANTE NOTIFICACIONES ═══════════════════════════════════ -->
+<div id="notif-fab" onclick="window.location.href='/notificaciones'"
+     style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
+            width:56px;height:56px;border-radius:50%;cursor:pointer;
+            background:oklch(55% 0.18 250);color:#fff;border:none;
+            display:flex;align-items:center;justify-content:center;
+            font-size:22px;box-shadow:0 6px 20px rgba(30,80,180,0.45);
+            transition:transform .2s,box-shadow .2s;"
+     onmouseover="this.style.transform='scale(1.12)';this.style.boxShadow='0 10px 30px rgba(30,80,180,0.65)'"
+     onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 20px rgba(30,80,180,0.45)'"
+     title="Centro de Notificaciones">
+  🔔
+  <span id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;
+        background:#ef4444;color:#fff;border-radius:50%;min-width:20px;height:20px;
+        font-size:11px;font-weight:900;line-height:20px;text-align:center;padding:0 4px;
+        border:2px solid #fff;"></span>
+</div>
+<script>
+async function _actualizarBadge(){
+  try{
+    const r=await fetch("/api/notificaciones");
+    const d=await r.json();
+    const b=document.getElementById("notif-badge");
+    if(d.total>0){b.textContent=d.total>99?"99+":d.total;b.style.display="block";}
+    else{b.style.display="none";}
+  }catch(e){}
+}
+_actualizarBadge();
+setInterval(_actualizarBadge,30000);
+</script>
+<div id="sd-toast" style="display:none;position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.75rem 1.5rem;border-radius:1rem;font-weight:700;font-size:.85rem;color:#a7f3c2;background:#1d6a3a;"></div>
+<script>
+function sdToast(msg,tipo){
+  var t=document.getElementById('sd-toast');
+  t.textContent=msg;
+  t.style.background=tipo==='err'?'#7f1d1d':'#1d6a3a';
+  t.style.color=tipo==='err'?'#fca5a5':'#a7f3c2';
+  t.style.display='block';
+  setTimeout(function(){t.style.display='none';},3000);
+}
+</script>
+</body>
+</html>

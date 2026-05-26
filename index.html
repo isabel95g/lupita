@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dulcería Lupita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --rosa:#f472b6; --rosa-lt:#fbcfe8; --rosa-dk:#be185d;
+      --mora:#a855f7; --mora-lt:#e9d5ff;
+      --amarillo:#fde68a; --menta:#6ee7b7;
+      --crema:#fff8f0; --cafe:#5c2d0a; --cafe-md:#92400e;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--crema); font-family:'Nunito',sans-serif; color:var(--cafe); overflow-x:hidden; }
+
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1rem 2.5rem;
+      background:rgba(255,248,240,.92); backdrop-filter:blur(10px);
+      border-bottom:2px dashed var(--rosa-lt); transition:box-shadow .3s;
+    }
+    nav.scrolled { box-shadow:0 4px 20px rgba(244,114,182,.18); }
+    .logo-nav { font-family:'Pacifico',cursive; font-size:1.55rem; color:var(--rosa-dk); text-decoration:none; display:flex; align-items:center; gap:.4rem; }
+    .nav-links { display:flex; gap:1.8rem; list-style:none; }
+    .nav-links a { font-size:.85rem; font-weight:600; color:var(--cafe-md); text-decoration:none; transition:color .2s; }
+    .nav-links a:hover { color:var(--rosa-dk); }
+
+    /* HERO */
+    .hero {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; padding:7rem 2rem 4rem; position:relative; overflow:hidden;
+      background:linear-gradient(160deg,#fff0f8 0%,#fff8f0 50%,#f0fff8 100%);
+    }
+    .blob { position:absolute; border-radius:50%; pointer-events:none; z-index:0; }
+    .blob-1 { width:420px; height:420px; background:rgba(244,114,182,.12); top:-80px; right:-100px; }
+    .blob-2 { width:300px; height:300px; background:rgba(168,85,247,.1); bottom:40px; left:-80px; }
+    .blob-3 { width:180px; height:180px; background:rgba(110,231,183,.18); top:30%; left:10%; }
+    .float-candy { position:absolute; font-size:2.2rem; animation:flotar 4s ease-in-out infinite; z-index:1; pointer-events:none; }
+    .f1{top:12%;left:7%;animation-delay:0s} .f2{top:18%;right:9%;animation-delay:.8s}
+    .f3{top:60%;left:4%;animation-delay:1.5s} .f4{top:65%;right:6%;animation-delay:.4s}
+    .f5{top:80%;left:50%;animation-delay:1s} .f6{top:35%;right:3%;animation-delay:2s}
+    @keyframes flotar { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-16px) rotate(5deg)} }
+    .hero-content { position:relative; z-index:2; max-width:680px; }
+    .hero-badge {
+      display:inline-block; background:var(--amarillo); color:var(--cafe-md);
+      font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      padding:.4rem 1rem; border-radius:99px; margin-bottom:1.4rem; border:2px solid #f59e0b;
+    }
+    h1 {
+      font-family:'Pacifico',cursive; font-size:clamp(3rem,9vw,6rem); line-height:1.1;
+      color:var(--rosa-dk); text-shadow:3px 3px 0 var(--mora-lt); margin-bottom:.6rem;
+      opacity:0; animation:popUp .8s .3s forwards;
+    }
+    h1 span { color:var(--mora); }
+    .hero-sub { font-size:clamp(1rem,2.5vw,1.25rem); font-weight:600; color:var(--cafe-md); margin-bottom:1rem; opacity:0; animation:popUp .8s .55s forwards; }
+    .hero-desc { font-size:.97rem; font-weight:400; color:#78350f; line-height:1.8; margin-bottom:2.2rem; max-width:460px; margin-inline:auto; opacity:0; animation:popUp .8s .75s forwards; }
+    .hero-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; opacity:0; animation:popUp .8s .95s forwards; }
+    .btn { display:inline-flex; align-items:center; gap:.4rem; padding:.85rem 2rem; border-radius:99px; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; cursor:pointer; text-decoration:none; border:none; transition:transform .2s,box-shadow .2s; }
+    .btn-pink { background:var(--rosa-dk); color:#fff; box-shadow:0 6px 20px rgba(190,24,93,.3); }
+    .btn-pink:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(190,24,93,.4); }
+    .btn-ghost { background:#fff; color:var(--rosa-dk); border:2px solid var(--rosa); }
+    .btn-ghost:hover { background:var(--rosa-lt); transform:translateY(-3px); }
+
+    .wave { display:block; width:100%; overflow:hidden; line-height:0; }
+    .wave svg { display:block; }
+
+    /* PRODUCTOS */
+    .productos { background:#fff0f8; padding:5rem 2rem; text-align:center; }
+    .section-tag { font-size:.75rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--mora); margin-bottom:.6rem; }
+    .section-title { font-family:'Pacifico',cursive; font-size:clamp(1.8rem,4vw,2.8rem); color:var(--rosa-dk); margin-bottom:.5rem; }
+    .section-desc { font-size:.95rem; color:var(--cafe-md); font-weight:400; max-width:460px; margin:0 auto 3rem; line-height:1.7; }
+    .cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.4rem; max-width:1000px; margin:0 auto; }
+    .prod-card { background:#fff; border-radius:20px; border:2px solid var(--rosa-lt); padding:2rem 1.2rem 1.5rem; text-align:center; transition:transform .25s,box-shadow .25s,border-color .25s; cursor:default; }
+    .prod-card:hover { transform:translateY(-6px); box-shadow:0 14px 32px rgba(244,114,182,.2); border-color:var(--rosa); }
+    .prod-card .icon { font-size:3.2rem; margin-bottom:.8rem; display:block; }
+    .prod-card h3 { font-family:'Pacifico',cursive; font-size:1.05rem; color:var(--rosa-dk); margin-bottom:.4rem; }
+    .prod-card p { font-size:.83rem; color:var(--cafe-md); line-height:1.6; }
+    .prod-card .precio { display:inline-block; margin-top:.8rem; background:var(--amarillo); color:var(--cafe); font-size:.8rem; font-weight:700; padding:.25rem .85rem; border-radius:99px; border:1.5px solid #f59e0b; }
+
+    /* PROMO */
+    .promo { background:linear-gradient(135deg,var(--mora) 0%,var(--rosa-dk) 100%); color:#fff; text-align:center; padding:3.5rem 2rem; }
+    .promo h2 { font-family:'Pacifico',cursive; font-size:clamp(1.6rem,4vw,2.5rem); margin-bottom:.6rem; }
+    .promo p { font-size:.95rem; opacity:.9; margin-bottom:1.6rem; max-width:400px; margin-inline:auto; line-height:1.7; }
+    .btn-white { background:#fff; color:var(--rosa-dk); }
+    .btn-white:hover { background:var(--amarillo); color:var(--cafe); transform:translateY(-3px); }
+
+    /* NOSOTROS */
+    .nosotros-wrap { background:var(--crema); }
+    .nosotros { padding:5rem 2rem; display:flex; align-items:center; justify-content:center; gap:3rem; flex-wrap:wrap; max-width:1000px; margin:0 auto; }
+    .about-ilus { font-size:5.5rem; background:var(--mora-lt); width:200px; height:200px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px dashed var(--mora); flex-shrink:0; animation:flotar 5s ease-in-out infinite; }
+    .about-text { max-width:460px; }
+    .about-text h2 { font-family:'Pacifico',cursive; font-size:clamp(1.8rem,3.5vw,2.5rem); color:var(--rosa-dk); margin-bottom:1rem; }
+    .about-text p { font-size:.95rem; color:var(--cafe-md); line-height:1.8; margin-bottom:.8rem; }
+    .about-badges { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; }
+    .badge { font-size:.75rem; font-weight:700; padding:.3rem .9rem; border-radius:99px; border:2px solid; }
+    .badge-pink { background:var(--rosa-lt); color:var(--rosa-dk); border-color:var(--rosa); }
+    .badge-mora { background:var(--mora-lt); color:#6b21a8; border-color:var(--mora); }
+    .badge-mint { background:#d1fae5; color:#065f46; border-color:var(--menta); }
+
+    /* CONTACTO */
+    .contacto { background:#fff0f8; text-align:center; padding:5rem 2rem; }
+    .contacto-cards { display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap; margin-top:2.5rem; }
+    .con-card { background:#fff; border-radius:16px; border:2px solid var(--rosa-lt); padding:1.8rem 1.5rem; min-width:180px; text-align:center; transition:border-color .25s,transform .25s; }
+    .con-card:hover { border-color:var(--rosa); transform:translateY(-4px); }
+    .con-card .icon-big { font-size:2.2rem; margin-bottom:.6rem; display:block; }
+    .con-card h4 { font-size:.78rem; font-weight:700; color:var(--mora); text-transform:uppercase; letter-spacing:.1em; margin-bottom:.3rem; }
+    .con-card p { font-size:.88rem; color:var(--cafe); font-weight:600; }
+
+    footer { background:var(--cafe); color:var(--crema); text-align:center; padding:2rem 1.5rem; }
+    footer .logo-nav { justify-content:center; margin-bottom:.4rem; color:var(--rosa-lt) !important; }
+    footer p { font-size:.8rem; opacity:.75; }
+
+    @keyframes popUp { from{opacity:0;transform:translateY(20px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .65s,transform .65s; }
+    .reveal.visible { opacity:1; transform:none; }
+
+    @media(max-width:600px){
+      nav { padding:.9rem 1.2rem; }
+      .nav-links { display:none; }
+      .nosotros { text-align:center; }
+      .about-badges { justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+
+ <!-- NAVEGACIÓN 
+  <nav id="nav">
+    <a href="#" class="logo-nav">🍬 Lupita</a>
+    <ul class="nav-links">
+      <li><a href="#productos">Productos</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+--> 
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <span class="float-candy f1">🍭</span>
+    <span class="float-candy f2">🍫</span>
+    <span class="float-candy f3">🍬</span>
+    <span class="float-candy f4">🧁</span>
+    <span class="float-candy f5">🍡</span>
+    <span class="float-candy f6">🍩</span>
+
+    <div class="hero-content">
+      <span class="hero-badge">✨ La más dulce del barrio ✨</span>     
+      <img src="/img/logo.png" alt="Dulce" style="height: 400px;"/>
+      <p class="hero-sub">¡Endulzamos cada momento!</p>
+      <p class="hero-desc">Desde 1998 trayendo a tu mesa los mejores dulces, chocolates, paletas y botanas. Todo con el sabor y cariño de siempre.</p>
+      <div class="hero-btns">
+        <a href="#productos" class="btn btn-pink">Login 🍬</a>
+        <a href="#contacto"  class="btn btn-ghost">Contáctanos</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wave">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;width:100%">
+      <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#fff0f8"/>
+    </svg>
+  </div>
+  <footer>
+    <a href="#" class="logo-nav">🍬 Lupita</a>
+    <p>© 2026 Dulcería Lupita · Hecho con mucho azúcar y cariño 💕</p>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    document.querySelectorAll('a[href^="#"]').forEach(a =>
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if(t){ e.preventDefault(); t.scrollIntoView({ behavior:'smooth' }); }
+      })
+    );
+  </script>
+</body>
+</html>

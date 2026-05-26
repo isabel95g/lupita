@@ -1,0 +1,1 @@
+Agregar una tabla llamada detalleproductos--> donde se se relacionene las tablas de porductos y proveedores

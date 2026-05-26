@@ -1,0 +1,111 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Módulo de Inventario</title>
+
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body class="p-6 space-y-6 bg-gray-100">
+
+<h1 class="text-3xl font-bold">📦 Módulo de Inventario</h1>
+
+
+<div class="bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">Resultados</h2>
+
+    <table class="w-full border rounded-lg overflow-hidden shadow-lg">
+        <thead class="bg-blue-500 text-white">
+            <tr>
+                <th class="p-3">Producto</th>
+                <th class="p-3">stock</th>
+                <th class="p-3">Estado</th>
+            </tr>
+        </thead>
+        <tbody id="tabla"></tbody>
+    </table>
+</div>
+
+
+<div class="bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">⚠️ Alertas</h2>
+    <ul id="alertas" class="list-disc pl-6"></ul>
+</div>
+
+<script>
+
+const API = "http://localhost:3001";
+
+// 🔔 Pedir permiso UNA sola vez al cargar
+Notification.requestPermission();
+
+// 🧠 Para no repetir notificaciones
+let notificados = new Set();
+
+function cargarInventario(){
+    fetch(`${API}/inventario`)
+    .then(res => res.json())
+    .then(data => {
+        mostrarTabla(data);
+        mostrarAlertas(data);
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("tabla").innerHTML =
+        "<tr><td colspan='3'>Error cargando datos</td></tr>";
+    });
+}
+
+function mostrarTabla(data){
+    const tabla = document.getElementById("tabla");
+
+    tabla.innerHTML = data.map(p => `
+        <tr class="text-center">
+            <td class="border p-2">${p.producto}</td>
+            <td class="border p-2">${p.cantidad}</td>
+            <td class="border p-2">${estado(p.cantidad)}</td>
+        </tr>
+    `).join("");
+}
+
+function estado(c){
+    if(c <= 5) return "CRÍTICO";
+    if(c <= 10) return "BAJO";
+    return "OK";
+}
+
+function mostrarAlertas(data){
+    const ul = document.getElementById("alertas");
+    ul.innerHTML = "";
+
+    data.forEach(p => {
+        if(p.cantidad <= 10){
+
+            // Mostrar en lista
+            ul.innerHTML += `<li>⚠️ ${p.producto} bajo stock</li>`;
+
+            // 🔔 Notificación (solo una vez por producto)
+            if (Notification.permission === "granted" && !notificados.has(p.producto)) {
+                new Notification("Stock bajo", {
+                    body:` ${p.producto} tiene poco stock (${p.cantidad})`
+                });
+
+                notificados.add(p.producto);
+            }
+        }
+    });
+}
+
+// 🔄 Cargar cada 5 segundos
+cargarInventario();
+setInterval(cargarInventario, 5000);
+</script>
+
+</body>
+</html>

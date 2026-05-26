@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Dulcería Lupita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main:   #f8fafc;
+            --bg-card:   #112240;
+            --bg-sidebar:#1a3560;
+            --accent:    #2d6aad;
+            --accent2:   #0d9488;
+            --border:    rgba(45,106,173,0.20);
+            --text-main: #1e293b;
+            --text-muted:#64748b;
+        }
+        body { font-family:'Plus Jakarta Sans',sans-serif; background-color:var(--bg-main);  }
+        .glass { background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 4px 24px rgba(0,0,0,0.08); }
+        .btn-accent { background:var(--accent); color:#ffffff; }
+        .btn-accent:hover { background:#3a7dc4; }
+        .btn-orange { background:var(--accent2); color:#ffffff; }
+        .btn-orange:hover { opacity:0.9; }
+        .input-dark { background:#f8fafc; border:1px solid #cbd5e1; color:#1e293b; }
+        .input-dark:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,106,173,0.25); outline:none; }
+        .input-dark::placeholder { color:#94a3b8; }
+        .card-module { background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.06); transition:all .25s; }
+        .card-module:hover { border-color:var(--accent2); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+        .escondido { display:none; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <h1 class="text-5xl md:text-6xl font-black mb-8 drop-shadow-md text-center" style="color:var(--accent2);">
+        DULCERÍA LUPITA
+    </h1>
+
+    <main class="glass rounded-[2rem] shadow-2xl max-w-4xl w-full p-10">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-black text-slate-800 mb-2">Área de Almacenamiento</h2>
+            <p style="color:var(--text-muted)" class="font-semibold">Selecciona un módulo para continuar</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <a href="/inventario" class="card-module rounded-2xl p-8 block">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">📦</div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Inventario</h3>
+                    <p class="text-sm" style="color:var(--text-muted)">Productos, stock, entradas y salidas</p>
+                </div>
+            </a>
+            <a href="/devoluciones" class="card-module rounded-2xl p-8 block">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">🔄</div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Devoluciones</h3>
+                    <p class="text-sm" style="color:var(--text-muted)">Ajustes y devoluciones de productos</p>
+                </div>
+            </a>
+            <a href="/configuracion" class="card-module rounded-2xl p-8 block">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Configuración</h3>
+                    <p class="text-sm" style="color:var(--text-muted)">Usuarios, sucursales y categorías</p>
+                </div>
+            </a>
+            <a href="/notificaciones" class="card-module rounded-2xl p-8 block">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">🔔</div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Notificaciones</h3>
+                    <p class="text-sm" style="color:var(--text-muted)">Alertas de stock y caducidades</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="text-center">
+            <a href="/logout" class="btn-orange px-10 py-3 rounded-full font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 inline-block">
+                Cerrar Sesión
+            </a>
+        </div>
+    </main>
+
+<!-- ═══ BOTÓN FLOTANTE NOTIFICACIONES ═══════════════════════════════════ -->
+<div id="notif-fab" onclick="window.location.href='/notificaciones'"
+     style="position:fixed;bottom:2rem;right:2rem;z-index:9990;
+            width:56px;height:56px;border-radius:50%;cursor:pointer;
+            background:var(--accent2);color:#fff;border:none;
+            display:flex;align-items:center;justify-content:center;
+            font-size:22px;box-shadow:0 6px 20px rgba(13,148,136,0.45);
+            transition:transform .2s,box-shadow .2s;"
+     onmouseover="this.style.transform='scale(1.12)';this.style.boxShadow='0 10px 30px rgba(13,148,136,0.6)'"
+     onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 20px rgba(13,148,136,0.45)'"
+     title="Centro de Notificaciones">
+  🔔
+  <span id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;
+        background:#ef4444;color:#fff;border-radius:50%;min-width:20px;height:20px;
+        font-size:11px;font-weight:900;line-height:20px;text-align:center;padding:0 4px;
+        border:2px solid #f8fafc;"></span>
+</div>
+<script>
+async function _actualizarBadge(){
+  try{
+    const r=await fetch("/api/notificaciones");
+    if(r.status===401){window.location.href='/';return;}
+    const d=await r.json();
+    const b=document.getElementById("notif-badge");
+    if(d.total>0){b.textContent=d.total>99?"99+":d.total;b.style.display="block";}
+    else{b.style.display="none";}
+  }catch(e){}
+}
+_actualizarBadge();
+setInterval(_actualizarBadge,30000);
+</script>
+</body>
+</html>
